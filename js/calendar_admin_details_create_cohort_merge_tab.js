@@ -1,4 +1,4 @@
-// Tabs logic (same as before)
+
 $('.calendar_admin_details_create_cohort_tab').click(function () {
   $('.calendar_admin_details_create_cohort_tab').removeClass('active');
   $(this).addClass('active');
@@ -54,24 +54,10 @@ $(document).click(function(){
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Calendar logic
-let mergeDateTargetBtn = null;
-let mergeCalendarMonth = null;
-let mergeSelectedCalendarDate = null;
+//let mergeDateTargetBtn = null;
+// let mergeCalendarMonth = null;
+// let mergeSelectedCalendarDate = null;
 
 function mergeDaysInMonth(year, month) {
   return new Date(year, month+1, 0).getDate();

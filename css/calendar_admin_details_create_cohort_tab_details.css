@@ -62,7 +62,9 @@
 .create_new_cohort_tab_select_color_left_list {
   display: none;
   position: absolute;
-  top: 0;
+  /* top: 0;
+   */
+  margin-bottom: 215px;
   right: 110%; /* to the left of the button */
   width: 58px;   /* This matches the width in your screenshot */
   min-height: 210px; /* approx the height of your menu in screenshot */
@@ -176,7 +178,8 @@
 .create_new_cohort_tab_select_color_right_list {
   display: none;
   position: absolute;
-  top: 0;
+  /* top: 0; */
+margin-bottom: 215px;
   left: 110%; /* pops to the right of the button */
   width: 58px;
   min-height: 210px;

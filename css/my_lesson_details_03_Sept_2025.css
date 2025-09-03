@@ -132,6 +132,22 @@
       padding: 20px 0;
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /* ===== Lessons Panel ===== */
     .my_lessons_section_heading {
       font-size: 20px;
@@ -226,6 +242,15 @@
       color: #d93025;
     }
 
+
+
+
+
+
+
+
+
+
     /* ===== Calendar Panel ===== */
     .my_lessons_calendar_actions {
       display: flex;
@@ -280,6 +305,8 @@
       width: 60px;
       font-size: 14px;
     }
+
+    
     .my_lessons_calendar_table tbody td {
       position: relative;
       height: 80px;

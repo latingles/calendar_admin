@@ -8,6 +8,20 @@ const REVEAL_MID   = parseInt(getComputedStyle(document.documentElement).getProp
 
 const DOW = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
 
+/* ====== WHITE SLOT WINDOWS ======
+   days: 'all' | [0..6]  (Mon=0 ... Sun=6)
+   Or target a specific ISO date with { date:'YYYY-MM-DD', ... }
+*/
+
+const WHITE_SLOTS = [
+  // Example per your ask: 10:00–11:00 PM and 11:00 PM–12:00 AM every day
+  { days: 'all', start: '22:00', end: '23:00' },
+  { days: 'all', start: '23:00', end: '24:00' },
+  // More examples you can add later:
+  // { days:[5,6], start:'18:00', end:'20:00' },
+  // { date:'2025-08-31', start:'10:00', end:'12:00' },
+];
+
 /* ====== DATA ====== */
 const events = [
   { day:2, title:"Conversation 1", start:"07:00", end:"08:00", color:"e-blue", repeat:true },
@@ -18,8 +32,8 @@ const events = [
   { day:2, title:"Mary Janes",     start:"11:00", end:"12:00", color:"e-blue", avatar:"https://randomuser.me/api/portraits/women/68.jpg" },
   { day:2, title:"Conversation",   start:"12:00", end:"13:00", color:"e-blue", repeat:true },
   { day:3, title:"Peer Talk",      start:"12:00", end:"13:00", color:"e-purple", repeat:true },
-  { date:"2025-08-12", title:"Busy", start:"10:00", end:"11:15", color:"e-gold" },
-  { date:"2025-08-15", title:"Demo Lesson",    start:"07:20", end:"08:00", color:"e-rose" }
+  { date:"2025-09-07", title:"Busy", start:"10:00", end:"11:15", color:"e-gold" },
+  { date:"2025-09-07", title:"Demo Lesson", start:"07:00", end:"08:30", color:"e-green" }
 ];
 
 /* ====== HELPERS ====== */
@@ -37,6 +51,33 @@ function rangeText(startDate){
   const m2=endDate.toLocaleString('default',opts); const d1=startDate.getDate();
   const d2=endDate.getDate(); const y=startDate.getFullYear();
   return (m1!==m2)?`${m1} ${d1} - ${m2} ${d2}, ${y}`:`${m1} ${d1} - ${d2}, ${y}`;
+}
+
+/* NEW: check if a slot minute falls in any WHITE_SLOTS rule */
+function isWhiteSlotFor(dayIndex, isoDate, minuteOfDay){
+  const toMin = (hhmm) => {
+    if (typeof hhmm === 'number') return hhmm;
+    const [h,m] = String(hhmm).split(':').map(Number);
+    return h*60 + (m||0);
+  };
+  for (const rule of WHITE_SLOTS){
+    // date-specific rule
+    if (rule.date){
+      if (rule.date !== isoDate) continue;
+    } else {
+      // day-of-week rules
+      if (rule.days === 'all'){
+        // ok
+      } else if (Array.isArray(rule.days)){
+        if (!rule.days.includes(dayIndex)) continue;
+      } else {
+        continue;
+      }
+    }
+    const s = toMin(rule.start), e = toMin(rule.end);
+    if (minuteOfDay >= s && minuteOfDay < e) return true;
+  }
+  return false;
 }
 
 /* ====== STATE ====== */
@@ -85,11 +126,11 @@ $(function(){
     this.style.zIndex = (++zSeed).toString();
   });
 
-  /* ====== CLICK: empty slot anywhere in a day column -> open cohort modal ====== */
+  /* ====== CLICK: empty slot -> open cohort modal ====== */
   $('#grid')
     .off('mousedown.emptySlot', '.day-inner')
     .on('mousedown.emptySlot', '.day-inner', function(e){
-      if ($(e.target).closest('.event').length) return; // ignore clicks on events
+      if ($(e.target).closest('.event').length) return;
       openCreateCohortModal();
     });
 
@@ -129,11 +170,19 @@ $(function(){
     for(let i=0;i<7;i++){
       const d=new Date(currentWeekStart); d.setDate(d.getDate()+i);
       weekDates.push(ymd(d));
-      const $col=$('<div class="day">');
+
+      const $col=$('<div class="day" style="z-index:0 !important">');
       const $inner=$('<div class="day-inner">').appendTo($col);
-      $inner.attr('data-date', ymd(d)); // useful if you later prefill modal
+      $inner.attr('data-date', ymd(d));
+
+      // CREATE SLOTS with white background when matched
       const $slots=$('<div class="slots">').appendTo($inner);
-      for(let r=0;r<rows;r++) $('<div>').appendTo($slots);
+      for (let r = 0; r < rows; r++) {
+        const minuteOfDay = START_H * 60 + r * SLOT_MIN;
+        const makeWhite = isWhiteSlotFor(i, ymd(d), minuteOfDay);
+        $('<div>').toggleClass('slot-white', makeWhite).appendTo($slots);
+      }
+
       $grid.append($col); dayEls.push($inner);
     }
 
@@ -149,14 +198,12 @@ $(function(){
       perDay[di].push(e);
     });
 
-    // Google-Calendar style overlap, but singletons use full width
+    // Overlap logic (unchanged)
     const MAX_LEFT = 4 + (STACK_CAP - 1) * STACK_OFFSET;
 
     perDay.forEach((list, di) => {
-      // sort by start, then end
       list.sort((a, b) => a.start - b.start || a.end - b.end);
 
-      // Pass 1: compute max concurrency across spans and assign lanes
       const active = [];
       list.forEach(ev => {
         for (let i = active.length - 1; i >= 0; i--) {
@@ -170,7 +217,6 @@ $(function(){
         ev.stackIndex = Math.min(conc - 1, STACK_CAP - 1);
       });
 
-      // Pass 2: render (full width if no overlaps)
       list.forEach(ev => {
         const top = (ev.start - START_H * 60) * PX_PER_MIN;
         const h   = (ev.end - ev.start) * PX_PER_MIN - 4;
@@ -182,17 +228,16 @@ $(function(){
               left: (MAX_LEFT - ev.stackIndex * STACK_OFFSET) + 'px',
               width: `calc(100% - ${MAX_LEFT + 8}px)`
             };
-            
-        const $ev = $(
-          `<div class="event ${ev.color || 'e-blue'}" data-start="${ev.start}" data-end="${ev.end}">
-             <div class="ev-top">
-               <div class="ev-left">${ev.avatar ? `<img class="ev-avatar" src="${ev.avatar}" alt="">` : ''}</div>
-               ${ev.repeat ? `<span class="ev-repeat" title="Repeats">&#8635;</span>` : ''}
-             </div>
-             <div class="ev-when">${fmt12(ev.start)} – ${fmt12(ev.end)}</div>
-             <div class="ev-title calendar_admin_details_conference">${ev.title || ''}</div>
-           </div>`
-        ).css({ top: top + 'px', height: h + 'px', ...cssPos });
+        const $ev = $(`
+          <div class="event ${ev.color || 'e-blue'}" data-start="${ev.start}" data-end="${ev.end}">
+            <div class="ev-top">
+              <div class="ev-left">${ev.avatar ? `<img class="ev-avatar" src="${ev.avatar}" alt="">` : ''}</div>
+              ${ev.repeat ? `<span class="ev-repeat" title="Repeats">&#8635;</span>` : ''}
+            </div>
+            <div class="ev-when">${fmt12(ev.start)} – ${fmt12(ev.end)}</div>
+            <div class="ev-title">${ev.title || ''}</div>
+          </div>
+        `).css({ top: top + 'px', height: h + 'px', ...cssPos });
 
         dayEls[di].append($ev);
       });

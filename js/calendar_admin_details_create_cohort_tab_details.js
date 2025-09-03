@@ -26,6 +26,7 @@ $('#createNewCohortSelectColorRight').click(function(e){
   $(this).toggleClass('active');
 });
 $('#createNewCohortColorListRight li').click(function(e){
+
   e.stopPropagation();
   var color = $(this).attr('data-color');
   $('#createNewCohortSelectedColorRight .create_new_cohort_tab_select_color_right_circle').css('background', color);

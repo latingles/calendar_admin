@@ -433,3 +433,99 @@
   font-weight: 500;
 }
 
+
+
+
+
+
+/*=======================Teacher Dropdown list START=========================================*/
+
+  /* .calendar_admin_details_create_cohort_class_tab_label{
+    font-weight: 600; color:#111; margin: 0 0 8px 2px; font-size: 15px;
+  } */
+
+  /* ===== Trigger (selected) ===== */
+  .calendar_admin_details_create_cohort_class_tab_trigger{
+    width: 100%; 
+    display:flex; 
+    align-items:center; 
+    justify-content:space-between;   /* left group & arrow */
+    background:#fff; 
+    border:1.5px solid #e7e7ef; 
+    border-radius:12px;
+    padding:12px 14px; 
+    cursor:pointer; 
+    position:relative;
+    box-shadow: var(--cohort-soft);
+    transition: box-shadow .15s ease, border-color .15s ease;
+  }
+  .calendar_admin_details_create_cohort_class_tab_trigger:hover{
+    box-shadow:0 10px 26px rgba(0,0,0,.06);
+  }
+
+  /* Left group (avatar + name) */
+  .calendar_admin_details_create_cohort_class_tab_left{
+    display:flex; 
+    align-items:center; 
+    gap:10px;
+  }
+  .calendar_admin_details_create_cohort_class_tab_avatar{
+    width:34px; height:34px; border-radius:10px; object-fit:cover; flex:0 0 auto;
+  }
+  .calendar_admin_details_create_cohort_class_tab_name{
+    font-weight: 600; 
+    color:#111; 
+    letter-spacing:.1px;
+  }
+
+  /* Chevron */
+  .calendar_admin_details_create_cohort_class_tab_chev{
+    width:20px; height:20px; flex:0 0 auto; 
+    transition: transform .15s ease;
+  }
+  .calendar_admin_details_create_cohort_class_tab_open 
+  .calendar_admin_details_create_cohort_class_tab_chev{
+    transform: rotate(180deg);
+  }
+
+  /* ===== Dropdown ===== */
+  .calendar_admin_details_create_cohort_class_tab_menu{
+    display:none; position:relative;
+  }
+  .calendar_admin_details_create_cohort_class_tab_panel{
+    position:absolute; inset:8px 0 auto 0;
+    background:#fff; border:1px solid #efeff6; border-radius:14px;
+    box-shadow: var(--cohort-shadow);
+    max-height: 380px; overflow:auto; padding: 6px 0;
+    z-index: 30;
+  }
+  .calendar_admin_details_create_cohort_class_tab_item{
+    display:flex; align-items:center; gap:12px;
+    padding:12px 16px; cursor:pointer; user-select:none;
+  }
+  .calendar_admin_details_create_cohort_class_tab_item:hover,
+  .calendar_admin_details_create_cohort_class_tab_item[aria-selected="true"]{
+    background:#f7f7fb;
+  }
+  .calendar_admin_details_create_cohort_class_tab_item .calendar_admin_details_create_cohort_class_tab_avatar{
+    width:40px; height:40px; border-radius:12px;
+  }
+  .calendar_admin_details_create_cohort_class_tab_item_name{
+    font-weight: 700; color:#111;
+  }
+
+  /* ===== Responsive tweaks ===== */
+  @media (max-width: 520px){
+    .calendar_admin_details_create_cohort_class_tab_panel{ max-height: 60vh; }
+    .calendar_admin_details_create_cohort_class_tab_item{ padding:14px 16px; }
+    .calendar_admin_details_create_cohort_class_tab_item .calendar_admin_details_create_cohort_class_tab_avatar{ width:44px; height:44px; }
+    .calendar_admin_details_create_cohort_class_tab_trigger{ padding:14px 14px; }
+  }
+
+  /* Optional subtle scrollbar styling */
+  .calendar_admin_details_create_cohort_class_tab_panel::-webkit-scrollbar{ width:10px; }
+  .calendar_admin_details_create_cohort_class_tab_panel::-webkit-scrollbar-thumb{
+    background:#e6e6f0; border-radius:10px;
+  }
+  
+/*=======================Teacher Dropdown list END=========================================*/

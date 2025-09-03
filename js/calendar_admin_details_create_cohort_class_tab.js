@@ -180,3 +180,49 @@ $(document).on('mousedown', function(event) {
     $('#customTimeDropdownDisplay').removeClass('active');
   }
 });
+
+
+
+//=======================Teacher Dropdown list start====================================//
+(function ($) {
+  const $widget = $('#calendar_admin_details_create_cohort_class_tab_widget');
+  const $trigger = $('#calendar_admin_details_create_cohort_class_tab_trigger');
+  const $menuWrap = $('#calendar_admin_details_create_cohort_class_tab_menu');
+  const $panel = $('#calendar_admin_details_create_cohort_class_tab_list');
+  const $label = $('#calendar_admin_details_create_cohort_class_tab_current_label');
+  const $img = $('#calendar_admin_details_create_cohort_class_tab_current_img');
+
+  function openMenu(){
+    $widget.addClass('calendar_admin_details_create_cohort_class_tab_open');
+    $trigger.attr('aria-expanded','true');
+    $menuWrap.show();
+  }
+  function closeMenu(){
+    $widget.removeClass('calendar_admin_details_create_cohort_class_tab_open');
+    $trigger.attr('aria-expanded','false');
+    $menuWrap.hide();
+  }
+
+  $trigger.on('click', function(e){
+    e.stopPropagation();
+    ($menuWrap.is(':visible')) ? closeMenu() : openMenu();
+  });
+
+  $panel.on('click', '.calendar_admin_details_create_cohort_class_tab_item', function(){
+    const name = $(this).data('name');
+    const src  = $(this).data('img');
+    $panel.find('.calendar_admin_details_create_cohort_class_tab_item[aria-selected="true"]').removeAttr('aria-selected');
+    $(this).attr('aria-selected','true');
+    $label.text(name);
+    $img.attr('src', src).attr('alt', name);
+    closeMenu();
+  });
+
+  $(document).on('click', function(e){
+    if(!$(e.target).closest('.calendar_admin_details_create_cohort_class_tab_wrap').length){
+      closeMenu();
+    }
+  });
+})(jQuery);
+
+//=======================Teacher Dropdown list END====================================//
