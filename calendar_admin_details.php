@@ -21,7 +21,7 @@
       <button class="calendar_admin_btn" id="calendar_admin_details_peer_talk">Peer talk</button>
       <button class="calendar_admin_btn" id="calendar_admin_details_add_time_off">Add time off</button>
       <button class="calendar_admin_btn" id="calendar_admin_details_add_extra_slots">Add Extra Slots</button>
-      <button class="calendar_admin_btn">Setup Availability</button>
+      <a href="calendar_admin_details_setup_availablity.php"><button class="calendar_admin_btn">Setup Availability</button></a>
       <div class="calendar_admin_tags_section">
         <h3>Tags</h3>
         <ul class="calendar_admin_tags_list">
@@ -115,7 +115,13 @@
 
 
 <!--============Calendar Content start======================-->
+<style>
+  /* Force selected empty slots to be white */
+#grid .day .day-inner .slots > div.slot-white{
+  background:#fff !important;
+}
 
+</style>
 
 
 <div class="wrap" id="calendar_admin_calendar_flexrow">
@@ -133,8 +139,7 @@
     </main>
   </div>
 
-<?php require_once('calendar_admin_details_time_off.php'); ?>
-<?php require_once('calendar_admin_details_lesson_information.php'); ?>  
+
 
 <script>
 $(function() {
@@ -167,4 +172,6 @@ $(function() {
 <script src="js/calendar_admin_details_create_cohort_add_time_tab.js"></script>
 
 <script src="js/calendar_admin_details_create_cohort.js"></script>
+<?php require_once('calendar_admin_details_time_off.php'); ?>
+<?php require_once('calendar_admin_details_lesson_information.php'); ?>  
 

@@ -133,6 +133,7 @@
   </div>
 </div>
 
+
 <!-- ========= MAIN CUSTOM RECURRENCE MODAL HTML ========= -->
 <div id="customRecurrenceModalBackdrop" class="calendar_admin_details_create_cohort_customrec_modal_backdrop" style="display:none;">
   <div class="calendar_admin_details_create_cohort_customrec_modal">
@@ -153,7 +154,7 @@
             <div class="customrec_option">1 Day</div>
             <div class="customrec_option">Week</div>
             <div class="customrec_option">Monthly</div>
-            <div class="customrec_option">Never</div>
+            <div class="customrec_option">Year</div>
           </div>
         </div>
       </div>
@@ -319,7 +320,7 @@ $(function() {
       $('#customRecurrenceModalBackdrop').fadeOut();
     }
   });
-
+  
   // ======== MONTHLY CALENDAR MODAL LOGIC ========
   // Modal State
   let calSelectedDate = new Date();
@@ -418,4 +419,121 @@ $(function() {
     if(e.target === this) $('#monthly_cal_modal_backdrop').fadeOut(80);
   });
 });
+
+
+
+
+
+// === Recurrence label sync with the opener button (Daily / Weekly on Mon, Wed, Fri / Monthly on Sep 27 / Annually on Sep 27) ===
+$(function () {
+  // Remember which button opened the modal
+  var $recurrenceTargetBtn = null;
+
+  // Works for either opener you use
+  $(document).on('click', '.conference_modal_repeat_btn, .cohort_schedule_btn', function () {
+    $recurrenceTargetBtn = $(this);
+    $('#customRecurrenceModalBackdrop').fadeIn();
+  });
+
+  function normalizePeriod() {
+    var raw = ($('#customrec_period_val').text() || '').trim().toLowerCase(); // "1 day" | "week" | "monthly" | "year"
+    if (raw.indexOf('day')   > -1) return 'day';
+    if (raw.indexOf('week')  > -1) return 'week';
+    if (raw.indexOf('month') > -1) return 'month';
+    if (raw.indexOf('year')  > -1) return 'year';
+    return '';
+  }
+
+  // Build a comma-separated weekday list based on the selected chips
+  function selectedWeekdaysLabel() {
+    // chip order is S M T W T F S (Sunday..Saturday)
+    var names = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    var picked = [];
+    $('#customrec_repeat_on_container .customrec_day_btn').each(function (idx) {
+      if ($(this).hasClass('active')) picked.push(names[idx]);
+    });
+    return picked.join(', ');
+  }
+
+  // Get text like "Sep 27,2025" and trim the year → "Sep 27"
+  function trimmedDateFrom(sel) {
+    return ($(sel).text() || '').trim().replace(/,\s*\d{4}$/, '');
+  }
+
+  function computeRecurrenceLabel() {
+    var n = parseInt($('#customrec_interval').text(), 10) || 1;
+    var p = normalizePeriod();
+    if (!p) return 'Does not repeat';
+
+    if (p === 'day') {
+      return (n === 1) ? 'Daily' : ('Every ' + n + ' days');
+    }
+
+    if (p === 'week') {
+      var days = selectedWeekdaysLabel(); // <<— Mon, Wed, Fri
+      if (n === 1) return days ? ('Weekly on ' + days) : 'Weekly';
+      return 'Every ' + n + ' weeks' + (days ? (' on ' + days) : '');
+    }
+
+    if (p === 'month') {
+      var on = trimmedDateFrom('#customrec_monthly_picker_date') || trimmedDateFrom('#customrec_end_date_btn');
+      if (n === 1) return 'Monthly on ' + on;
+      return 'Every ' + n + ' months on ' + on;
+    }
+
+    if (p === 'year') {
+      var onYear = trimmedDateFrom('#customrec_end_date_btn') || trimmedDateFrom('#customrec_monthly_picker_date');
+      if (n === 1) return 'Annually on ' + onYear;
+      return 'Every ' + n + ' years on ' + onYear;
+    }
+
+    return 'Does not repeat';
+  }
+
+  function updateRepeatButtonLabel() {
+    var $btn = ($recurrenceTargetBtn && $recurrenceTargetBtn.length)
+      ? $recurrenceTargetBtn
+      : $('.conference_modal_repeat_btn, .cohort_schedule_btn').first();
+
+    if (!$btn.length) return;
+
+    var label = computeRecurrenceLabel();
+
+    // Keep each button's arrow style
+    if ($btn.hasClass('cohort_schedule_btn')) {
+      $btn.html(label + ' <span class="cohort_schedule_arrow">&#9660;</span>');
+    } else if ($btn.hasClass('conference_modal_repeat_btn')) {
+      $btn.html(label + '<span style="float:right; font-size:1rem;">&#9660;</span>');
+    } else {
+      $btn.text(label);
+    }
+  }
+
+  // Update when period changes
+  $(document).on('click', '#customrec_period_list .customrec_option', function () {
+    setTimeout(updateRepeatButtonLabel, 0);
+  });
+
+  // Update when interval +/- changes
+  $(document).on('click', '#customrec_plus, #customrec_minus', function () {
+    setTimeout(updateRepeatButtonLabel, 0);
+  });
+
+  // Update live when weekday chips are toggled
+  $(document).on('click', '.customrec_day_btn', function () {
+    setTimeout(updateRepeatButtonLabel, 0);
+  });
+
+  // Update after choosing dates in monthly/ends-on calendar
+  $(document).on('click', '#monthly_cal_done', function () {
+    setTimeout(updateRepeatButtonLabel, 0);
+  });
+
+  // Update on Done
+  $(document).on('click', '#customrec_done', function () {
+    updateRepeatButtonLabel();
+  });
+});
+
+
 </script>

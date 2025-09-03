@@ -2,7 +2,7 @@
 <link rel="stylesheet"  href="css/my_lesson_details.css"/>
 <link rel="stylesheet" href="css/my_lesson_tutor_profile_details_send_message.css">
 
-  <div id="my_lessons_container">
+<div id="my_lessons_container">
     <!-- Header + Actions -->
     <h1 class="my_lessons_header">My Lessons</h1>
     <div class="my_lessons_actions">
@@ -30,7 +30,7 @@
               <p>Lessons happen once</p>
             </div>
           </div>
-          
+
         </div>
       </div>
     </div>
@@ -65,7 +65,9 @@
               Tomorrow, Nov 13, 15:00 – 15:50
             </span>
           </div>
-          <div class="my_lessons_lesson_subject">English</div>
+          
+          <div class="my_lessons_lesson_subject"> Daniala, English</div>
+
         </div>
         <div class="my_lessons_menu_section">
           <i class="fas fa-ellipsis-h my_lessons_menu_icon"></i>
@@ -92,7 +94,7 @@
               Thursday, Nov 14, 15:00 – 15:50
             </span>
           </div>
-          <div class="my_lessons_lesson_subject">English</div>
+          <div class="my_lessons_lesson_subject"> Daniala, English</div>
         </div>
         <div class="my_lessons_menu_section">
           <i class="fas fa-ellipsis-h my_lessons_menu_icon"></i>
@@ -118,7 +120,7 @@
               Monday, Nov 18, 15:00 – 15:50
             </span>
           </div>
-          <div class="my_lessons_lesson_subject">English</div>
+          <div class="my_lessons_lesson_subject"> Daniala, English</div>
         </div>
         <div class="my_lessons_menu_section">
           <i class="fas fa-ellipsis-h my_lessons_menu_icon"></i>
@@ -144,7 +146,7 @@
               Wednesday, Nov 20, 15:00 – 15:50
             </span>
           </div>
-          <div class="my_lessons_lesson_subject">English</div>
+          <div class="my_lessons_lesson_subject"> Daniala, English</div>
         </div>
         <div class="my_lessons_menu_section">
           <i class="fas fa-ellipsis-h my_lessons_menu_icon"></i>
@@ -173,7 +175,7 @@
               Every Wednesday, 15:00 – 15:50
             </span>
           </div>
-          <div class="my_lessons_lesson_subject">English</div>
+          <div class="my_lessons_lesson_subject"> Daniala, English</div>
         </div>
         <div class="my_lessons_menu_section">
           <i class="fas fa-ellipsis-h my_lessons_menu_icon"></i>
@@ -189,155 +191,20 @@
       </div>
     </div>
 
-     <!-- Calendar Tab -->
-    <div id="my_lessons_tab_calendar" class="my_lessons_tab_content">
-      <div class="my_lessons_calendar_actions">
-        <div class="my_lessons_calendar_nav">
 
 
-          <button class="my_lessons_today_btn my_lessons_btn_outline" id="todayBtn">Today</button>
-          <button class="my_lessons_nav_btn my_lessons_btn_outline"   id="prevWeek">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="my_lessons_nav_btn my_lessons_btn_outline" id="nextWeek">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        
-          
-          <div class="my_lessons_calendar_date">September 02–08, 2024</div>
-        </div>
-        <div class="my_lessons_calendar_legend">
-          <div><i class="fas fa-check-circle"></i> Confirmed by the student</div>
-          <div><i class="fas fa-sync-alt"></i> Weekly Class</div>
-          <div><i class="fas fa-calendar-alt"></i> Single Class</div>
-        </div>
+    
+      <!-- Calendar Tab -->
+      <div id="my_lessons_tab_calendar" class="my_lessons_tab_content">
+        <?php  require_once('my_lessons_details_calendar_content.php');?>      
       </div>
-      <table class="my_lessons_calendar_table">
-        <thead>
-          <tr>
 
-            <th></th>
-            <th class="calendar-day-header" data-index="0">Mon 2</th>
-            <th class="calendar-day-header" data-index="1">Tue 3</th>
-            <th class="calendar-day-header" data-index="2">Wed 4</th>
-            <th class="calendar-day-header" data-index="3">Thu 5</th>
-            <th class="calendar-day-header" data-index="4">Fri 6</th>
-            <th class="calendar-day-header" data-index="5">Sat 7</th>
-            <th class="calendar-day-header" data-index="6">Sun 8</th>
 
-          </tr>
-        </thead>
-        <tbody>
-          <tr><th>6:00</th><td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        </tr>
-          <tr>
-            <th>7:00</th>
-      
-            <td class="my_lessons_calendar_slot_empty"></td>
-            <td class="my_lessons_calendar_slot_empty"></td>
-            <td class="my_lessons_calendar_slot_empty"></td>
 
-            <td>
-              <div class="my_lessons_calendar_event my_lessons_event_weekly my_lessons_calendar_event my_lessons_event_weekly">
-                <img class="my_lessons_event_avatar"
-                     src="https://randomuser.me/api/portraits/women/4.jpg"
-                     alt="Mary Janes">
-                <i class="fas fa-sync-alt my_lessons_event_icon"></i>
-                <div class="my_lessons_event_time">07:00–08:00 AM</div>
-                <div class="my_lessons_event_name">Mary Janes</div>
-              </div>
-            </td>
 
-            <td></td><td></td>
-            <td>
-              <div class="my_lessons_calendar_event my_lessons_event_single">
-                <img class="my_lessons_event_avatar"
-                     src="https://randomuser.me/api/portraits/women/4.jpg"
-                     alt="Mary Janes">
-                <i class="fas fa-check-circle my_lessons_event_icon"></i>
-                <div class="my_lessons_event_time">07:00–08:00 AM</div>
-                <div class="my_lessons_event_name">Mary Janes</div>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <th>8:00</th><td></td>
 
-            
-            <td>
-              <div class="my_lessons_calendar_event my_lessons_event_confirmed">
-                <img class="my_lessons_event_avatar"
-                     src="https://randomuser.me/api/portraits/men/2.jpg"
-                     alt="Mary Janes">
-                <i class="fas fa-check-circle my_lessons_event_icon"></i>
-                <div class="my_lessons_event_time">08:00–09:00 AM</div>
-                <div class="my_lessons_event_name">Mary Janes</div>
-              </div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
 
-          </tr>
 
-      <tr><th>9:00</th><td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        
-        </tr>
-
-          <tr>
-            <th>10:00</th>
-            <td>
-              <div class="my_lessons_calendar_event my_lessons_event_single">
-                <img class="my_lessons_event_avatar"
-                     src="https://randomuser.me/api/portraits/women/4.jpg"
-                     alt="Mary Janes">
-                <i class="fas fa-check-circle my_lessons_event_icon"></i>
-                <div class="my_lessons_event_time">10:00–11:00 AM</div>
-                <div class="my_lessons_event_name">Mary Janes</div>
-              </div>
-            </td>
-            <td colspan="3"></td>
-            <td>
-              <div class="my_lessons_calendar_event my_lessons_event_single">
-                <img class="my_lessons_event_avatar"
-                     src="https://randomuser.me/api/portraits/women/4.jpg"
-                     alt="Mary Janes">
-                <i class="fas fa-calendar-alt my_lessons_event_icon"></i>
-                <div class="my_lessons_event_time">10:00–11:00 AM</div>
-                <div class="my_lessons_event_name">Mary Janes</div>
-              </div>
-            </td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-      <tr><th>20:00</th>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
 
 <!-- Tutors Tab -->
 <div id="my_lessons_tab_tutors" class="my_lessons_tab_content">
@@ -504,6 +371,7 @@
   </div>
 </div>
 
+
 </div>
 
   <!-- jQuery + Logic -->
@@ -511,17 +379,18 @@
   <script src="js/my_lessons_details.js"></script>
   <script src="js/my_lessons_tutor_profile_details_send_message.js"></script>
 
-
   <?php require_once('my_lesson_details_calendar_cancel.php');?>
-  <?php require_once('my_lesson_details_calendar_empty_slot.php');?>
+  <?php require_once('my_lesson_details_calendar_empty_slot.php');
+  ?>
   <?php require_once('my_lesson_details_calendar_show_details.php');?>
   <?php require_once('my_lesson_details_calendar_show_rating.php');?>
-  <?php require_once('my_lesson_details_calendar_show_feedback.php');?>
+  <?php require_once('my_lesson_details_calendar_show_feedback.php'); ?>
 
-  <?php require_once('../theme/alpha/layout/transfer_lessons.php');?>
+  <?php require_once('../../theme/alpha/layout/transfer_lessons.php');?>
 
-  <?php require_once('my_lessons_tutor_profile_details_send_message.php');?>
-    <?php require_once('my_lesson_details_tutor_details.php');?>
+  <?php require_once('my_lessons_tutor_profile_details_send_message.php'); ?>
+  <?php require_once('my_lesson_details_tutor_details.php');
+  ?>
 
 
 

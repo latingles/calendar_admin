@@ -8,7 +8,7 @@
   <style>
 
     #calendar_admin_details_create_cohort_modal_backdrop {
-      display: none; position: fixed; z-index: 1000;
+      display: none; position: fixed; z-index: 2000;
       top: 0; left: 0; right: 0; bottom: 0;
       background: rgba(0,0,0,.6);
     }
@@ -19,6 +19,10 @@
       padding: 28px 20px 20px 20px;
       overflow-y: auto; position: relative;
       box-shadow: 0 10px 36px 0 rgba(0,0,0,.17);
+      overflow-y: auto;
+      z-index: 2001 !important; /* modal itself */
+
+
     }
     .calendar_admin_details_create_cohort_close {
       position: absolute; top: 16px; right: 15px;
@@ -129,6 +133,7 @@
       font-size: 1.02rem; text-align: left;
       cursor: pointer; position: relative;
       display: flex; align-items: center; justify-content: space-between;
+      height: 50px;
     }
     .conference_modal_dropdown_btn svg {
       width: 18px; height: 18px; margin-left: auto; fill: #aaa;
@@ -233,6 +238,7 @@
       cursor: pointer; font-size: 1rem; text-align: left;
       position: relative; box-sizing: border-box;
       display: flex; align-items: center; justify-content: space-between;
+      height: 55px;
     }
     .calendar_admin_details_create_cohort_dropdown_btn svg,
     .calendar_admin_details_create_cohort_shortname_btn svg,
@@ -373,7 +379,9 @@
     }
     .calendar_admin_details_create_cohort_time_btn.selected {border: 2px solid #fe2e0c; color: #fe2e0c; background: #fff4f1;}
     label { font-size: .97rem; font-weight: 500; color: #232323; }
-    .calendar_admin_details_create_cohort_event_nav {
+
+
+    /* .calendar_admin_details_create_cohort_event_nav {
       display: flex; align-items: center; justify-content: center; gap: 18px; margin: 18px 0 13px 0;
       font-size: 1.07rem; font-weight: 600;
     }
@@ -384,7 +392,98 @@
     .calendar_admin_details_create_cohort_event_nav .calendar_admin_details_create_cohort_add {
       color: #fff; background: #fe2e0c; border: none; font-size: 1.3rem; border-radius: 50%; width: 34px; height: 34px; padding: 0;
       display: flex; align-items: center; justify-content: center; margin-left: 6px; box-shadow: 0 2px 8px rgba(254,46,12,0.10);
-    }
+    } */
+
+
+
+
+
+
+
+
+
+
+
+/* Event nav row */
+.calendar_admin_details_create_cohort_event_nav{
+  position: relative;
+  display: flex; align-items: center;
+  min-height: 48px;
+  margin: 18px 0 13px 0;
+}
+
+/* Centered [<] Events [>] cluster */
+.calendar_event_group{
+  position: absolute;
+  left: 50%; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 12px;
+  padding: 0;
+  background: transparent !important;   /* kill the tan strip */
+  box-shadow: none !important;
+  border: 0 !important;
+}
+.calendar_event_group > *{ pointer-events: auto; }
+
+/* Title */
+.calendar_event_nav_title{
+  margin: 0; line-height: 1;
+  font-weight: 800; color:#111;
+  background: transparent !important;   /* make sure no bg */
+  padding: 0 2px;
+}
+
+/* Arrow buttons (subtle gray rounded squares) */
+.calendar_event_nav_btn{
+  width: 36px; height: 36px;
+  display:flex; align-items:center; justify-content:center;
+  padding: 0;
+  border-radius: 10px;
+  background: #fff !important;
+  border: 1.5px solid #e7e7ef;
+  color: #8f96a3;
+  box-shadow: none;
+  transition: background .15s, border-color .15s, transform .08s;
+}
+.calendar_event_nav_btn:hover { background:#f7f7fb; border-color:#dcdcea; }
+.calendar_event_nav_btn:active{ transform: translateY(1px); }
+.calendar_event_nav_btn svg{ width:18px; height:18px; display:block; }
+
+/* Keep the + on the right and red */
+.calendar_admin_details_create_cohort_event_nav .calendar_admin_details_create_cohort_add{
+  margin-left: auto;                   /* pushes to far right */
+  width: 42px; height: 42px; padding: 0;
+  border-radius: 50%;
+  background: #ff2f1b !important;
+  color: #fff; font-size: 22px; line-height: 1;
+  border: 2px solid #111;
+  box-shadow: 0 6px 16px rgba(255,47,27,.28);
+}
+
+/* Defensive: remove any leftover bg that might wrap the cluster */
+.calendar_admin_details_create_cohort_event_nav > span,
+.calendar_admin_details_create_cohort_event_nav > div{
+  background: transparent !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     select, input[type="text"], input[type="date"] {
       width: 100%; padding: 9px; border-radius: 5px; border: 1px solid #ccc;
       font-size: 1rem; margin-top: 2px; margin-bottom: 6px;
@@ -399,28 +498,35 @@
       width: 26px; height: 26px; background: #1736e6;
       border-radius: 50%; display: inline-block; position: relative; cursor: pointer; border: 2px solid #1736e6;
     }
-    .calendar_admin_details_create_cohort_bottom {
-      display: flex; gap: 16px; 
-      /* justify-content: space-between; */
-      align-items: center; margin: 20px 0 10px 0;
-    }
-    .calendar_admin_details_create_cohort_switch {
-      display: flex; align-items: center; gap: 9px; font-size: 1.07rem;
-    }
-    .calendar_admin_details_create_cohort_toggle {
-      width: 43px; height: 24px; background: #ededed; border-radius: 20px; position: relative; cursor: pointer; transition: background 0.2s; border: 1.5px solid #ddd;
-    }
-    .calendar_admin_details_create_cohort_toggle::before {
-      content: ''; width: 21px; height: 21px; background: #fff; position: absolute; top: 1px; left: 1px; border-radius: 50%; transition: all 0.28s; box-shadow: 0 1px 6px 0 rgba(0,0,0,.07);
-    }
-    .calendar_admin_details_create_cohort_toggle.active {background: #5ec76c; border-color: #51b95f;}
-    .calendar_admin_details_create_cohort_toggle.active::before {left: 21px;}
+
+
+
+
+
+
+
     .calendar_admin_details_create_cohort_btn {
       width: 100%; background-color: #fe2e0c; color: white; padding: 15px 0;
       border: none; font-weight: bold; font-size: 1.11rem; margin-top: 13px;
       border-radius: 9px; cursor: pointer; letter-spacing: .5px;
       box-shadow: 0 3px 13px 0 rgba(254,46,12,.07);
+        position: sticky;
+        bottom: 0;                 /* stick to bottom edge of the scrollport */
+        z-index: 5;                /* above form fields, below popups */
     }
+          /* Optional: add a soft separator behind the sticky button for readability */
+      .calendar_admin_details_create_cohort_btn::before {
+        content: "";
+        position: absolute;
+        left: 0; right: 0; bottom: 100%;
+        height: 14px;
+        pointer-events: none;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), #fff 70%);
+        border-top-left-radius: 12px;
+        border-top-right-radius: 12px;
+      }
+
+
     /* Calendar modal styles ... */
     .calendar_admin_details_create_cohort_calendar_modal_backdrop {
       display: none; position: fixed; z-index: 2050;
@@ -710,6 +816,7 @@
   transition: border .15s;
   min-width: 180px;
   color: #787878;
+  height: 50px;
 }
 .calendar_admin_details_cohort_tab_timezone_arrow {
   margin-left: auto;
@@ -814,9 +921,163 @@
   color: #fe2e0c;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+/* White circular trash chip positioned just below the + */
+.calendar_admin_details_create_cohort_event_nav .calendar_admin_details_create_cohort_remove{
+  position: absolute;
+  right: 6px;                 /* aligns with the + on the right edge */
+  top: 50%;
+  transform: translateY(28px); /* places it below the + */
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+  background: #fff !important; /* white chip */
+  color: #ff2f1b;              /* red trash icon */
+  border: 1px solid #e7e7ef;   /* subtle ring */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 18px rgba(0,0,0,.12); /* soft shadow like your mock */
+  z-index: 2;
+}
+
+.calendar_admin_details_create_cohort_event_nav
+  .calendar_admin_details_create_cohort_remove svg{
+  width: 18px; height: 18px; display: block;
+  fill: currentColor;          /* inherit the red color */
+}
+
+.calendar_admin_details_create_cohort_event_nav
+  .calendar_admin_details_create_cohort_remove:hover{
+  border-color: #ff2f1b;
+  box-shadow: 0 10px 20px rgba(0,0,0,.14);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* === Class Name dropdown: card style like snapshot === */
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_dropdown_wrapper{
+  position: relative;
+
+}
+
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_btn{
+  border: 1.8px solid #232323;   /* crisp border like mock */
+  border-radius: 12px;
+  height: 56px;
+  background: #fff;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 13px 14px;
+}
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_btn svg{
+  transition: transform .18s;
+}
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_btn.open svg{
+  transform: rotate(180deg);
+}
+
+/* The menu card */
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_list{
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);         /* little gap under the button */
+  left: 0;
+  width: 100%;                   /* same width as button */
+  background: #ffffff;
+  border: none !important;       /* remove old border */
+  border-radius: 16px;
+  box-shadow: 0 18px 36px rgba(0,0,0,.12), 0 6px 16px rgba(0,0,0,.06);
+  padding: 8px 6px;
+  z-index: 120;                  /* above sticky footer btn */
+}
+
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_list ul{
+  list-style: none; margin: 0; padding: 6px;
+}
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_list li{
+  padding: 13px 14px;
+  font-size: 1.06rem;
+  color: #232323;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background .12s ease;
+}
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_list li:hover,
+#calendar_admin_details_create_cohort_modal .calendar_admin_details_create_cohort_class_list li.selected{
+  background: #f7f7f7;          /* subtle hover like snapshot */
+}
+
+
+
+
+
+
+
+
+/* Tabs: light background on hover, don't change active */
+.calendar_admin_details_create_cohort_tab{
+  /* border-radius: 10px; */
+  transition: background .15s ease;
+}
+
+/* Hover only affects non-active tabs */
+.calendar_admin_details_create_cohort_tab:not(.active):hover{
+  background: #f7f7f9;   /* light pill bg */
+  box-shadow: none;      /* cancel any earlier shadow rules */
+  transform: none;       /* no lift */
+  /* color left unchanged on purpose */
+}
+
+/* Keep active look exactly the same, even on hover */
+.calendar_admin_details_create_cohort_tab.active,
+.calendar_admin_details_create_cohort_tab.active:hover{
+  background: transparent;
+  color: #fe2e0c;
+  border-bottom: 3px solid #fe2e0c;
+}
+
+
+
+
+
 </style>
-
-
 
 </head>
 <body>
@@ -840,9 +1101,13 @@
       </div>
 
       <div class="calendar_admin_details_create_cohort_content" id="mainModalContent">
+
+
+
+
+
+
         <div class="calendar_admin_details_create_cohort_row">
-
-
           <div class="container-fluid">
             <!-- One row, fixed halves -->
             <div class="d-flex mb-3" style="gap:16px;">
@@ -859,7 +1124,7 @@
                   <input type="text" readonly aria-readonly="true"
                         class="form-control cohort-tooltip-target"
                         id="cohortInput" placeholder="XXX-#-#####-###"
-                        style="width:100%;height:46px;border-radius:12px;border:1.5px solid #e3e3e7;
+                        style="width:100%;height:50px;border-radius:12px;border:1.5px solid #e3e3e7;
                         font-size:1rem;color:#818191;font-weight:500;background:#fff;
                         letter-spacing:2px;cursor:default;">
 
@@ -886,7 +1151,7 @@
                   <input type="text" readonly aria-readonly="true"
                         class="form-control cohort-tooltip-target"
                         id="cohortShortInput" placeholder="XX#"
-                        style="width:100%;height:46px;border-radius:12px;border:1.5px solid #e3e3e7;
+                        style="width:100%;height:50px;border-radius:12px;border:1.5px solid #e3e3e7;
                         font-size:1rem;color:#818191;font-weight:500;background:#fff;
                         letter-spacing:2px;cursor:default;">
 
@@ -905,294 +1170,317 @@
             </div>
           </div>
 
-          <script>
-          // Show tooltip on hover/focus for BOTH fields; place BELOW the input
-          (function($){
-            $('.cohort-tooltip-target')
-              .on('mouseenter focus', function(){
-                $(this).siblings('.custom-tooltip').stop(true,true).fadeIn(140);
-              })
-              .on('mouseleave blur', function(){
-                $(this).siblings('.custom-tooltip').stop(true,true).fadeOut(140);
-              });
-          })(jQuery);
-          </script>
 
 
 
+</div>
 
 
 
-
-          
-        </div>
-        <!-- Event navigation -->
+        <!-- Event navigation -->        
         <div class="calendar_admin_details_create_cohort_event_nav">
-          <button type="button">&#60;</button>
-          <span style="flex: 1; text-align: center;">Events</span>
-          <button type="button">&#62;</button>
+          <div class="calendar_event_group">
+            <button type="button" class="calendar_event_nav_btn prev" aria-label="Previous">
+              <svg viewBox="0 0 24 24"><polyline points="15 19 8 12 15 5" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+
+            <span class="calendar_event_nav_title">Events</span>
+
+            <button type="button" class="calendar_event_nav_btn next" aria-label="Next">
+              <svg viewBox="0 0 24 24"><polyline points="9 5 16 12 9 19" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+
+          <!-- this keeps the red + visible on the far right -->
           <button type="button" class="calendar_admin_details_create_cohort_add">+</button>
+
+            <!-- NEW: delete button -->
+            <button type="button" class="calendar_admin_details_create_cohort_remove" aria-label="Remove last teacher">
+              <!-- trash icon -->
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true">
+                <path d="M9 3h6a1 1 0 0 1 1 1v1h4v2h-1v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V7H4V5h4V4a1 1 0 0 1 1-1Zm1 2v0h4V4h-4v1Zm-2 2v12h8V7H8Zm2 2h2v8h-2V9Zm4 0h2v8h-2V9Z"/>
+              </svg>
+            </button>
         </div>
-        <div class="calendar_admin_details_create_cohort_row">
-          <div>
-            <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
-              <label>Teacher 1</label>
-              <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher1DropdownBtn">
-                Select Teacher
-                <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
-              </div>
-              <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher1DropdownList">
-                <ul>
-                  <li><img src="https://randomuser.me/api/portraits/men/11.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Edwards</li>
-                  <li><img src="https://randomuser.me/api/portraits/women/44.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Daniela</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/31.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Hawkins</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/32.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Lane</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/33.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Warren</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/52.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Fox</li>
-                </ul>
-              </div>
-            </div>
-            <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
-              <label>Class Name</label>
-              <div class="calendar_admin_details_create_cohort_class_btn" id="className1DropdownBtn">
-                Main Class
-                <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
-              </div>
-              <div class="calendar_admin_details_create_cohort_class_list" id="className1DropdownList">
-                <ul>
-                  <li>Main Class</li>
-                  <li>Tutoring Class</li>
-                  <li>Conversational Class</li>
-                </ul>
-              </div>
-            </div>
 
 
 
-                <div class="cohort_schedule_box">
-                  <div class="cohort_schedule_header">
-                    <span class="cohort_schedule_icon">&#9432;</span>
-                    <span>Class Schedule</span>
-                  </div>
-                  <button type="button" class="cohort_schedule_btn">
-                    Does not repeat
-                    <span class="cohort_schedule_arrow">&#9660;</span>
-                  </button>
-                </div>
-
-
-              <!-- <div class="calendar_admin_details_cohort_tab_time_buttons_row">
-                <button class="calendar_admin_details_create_cohort_time_btn">Start Time</button>
-                <div class="calendar_admin_details_cohort_tab_time_divider"></div>
-                <button class="calendar_admin_details_create_cohort_time_btn">End Time</button>
-              </div>
- -->
-                      <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
-                        <div class="custom-time-pill">
-                          <input type="text" class="form-control time-input" value="9:30 am" autocomplete="off" readonly  style="background-color: #ffffff;"/>
-                          <div class="custom-time-dropdown"></div>
-                        </div>
-                        <div class="time-dash">–</div>
-                        <div class="custom-time-pill">
-                          <input type="text" class="form-control time-input" value="10:30 am" autocomplete="off" readonly style="background-color: #ffffff;"/>
-                          <div class="custom-time-dropdown"></div>
-                        </div>
-                      </div>
 
 
 
-                  <div class="calendar_admin_details_cohort_tab_timezone_wrapper" style="margin-top:10px;">
-                    <label class="calendar_admin_details_cohort_tab_timezone_label">Event time zone</label>
-                    <div class="calendar_admin_details_cohort_tab_timezone_dropdown" id="eventTimezoneDropdown">
-                      <span id="eventTimezoneSelected">(GMT-05:00) Eastern</span>
-                      <svg class="calendar_admin_details_cohort_tab_timezone_arrow" width="18" height="18" viewBox="0 0 20 20">
-                        <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
-                      </svg>
-                      <div class="calendar_admin_details_cohort_tab_timezone_list" id="eventTimezoneDropdownList">
-                        <ul>
-                          <li>(GMT-12:00) International Date Line West</li>
-                          <li>(GMT-11:00) Midway Island, Samoa</li>
-                          <li>(GMT-10:00) Hawaii</li>
-                          <li>(GMT-09:00) Alaska</li>
-                          <li>(GMT-08:00) Pacific Time (US & Canada)</li>
-                          <li>(GMT-07:00) Mountain Time (US & Canada)</li>
-                          <li>(GMT-06:00) Central Time (US & Canada)</li>
-                          <li>(GMT-05:00) Eastern Time (US & Canada)</li>
-                          <li>(GMT+00:00) London</li>
-                          <li>(GMT+01:00) Berlin, Paris</li>
-                          <li>(GMT+03:00) Moscow, Nairobi</li>
-                          <li>(GMT+05:00) Pakistan</li>
-                          <li>(GMT+05:30) India</li>
-                          <li>(GMT+08:00) Beijing, Singapore</li>
-                          <li>(GMT+09:00) Tokyo, Seoul</li>
-                          <li>(GMT+10:00) Sydney</li>
-                          <!-- Add as many as you need -->
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
 
 
-                    <label style="margin-top:20px;">Start On</label>
-                    <button class="conference_modal_date_btn">Select Date</button>
 
 
-                                <div class="create_new_cohort_tab_select_color_left_row">
-                                  <label class="create_new_cohort_tab_select_color_left_label">Find a time</label>
-                                  <div class="create_new_cohort_tab_select_color_left_dropdown" id="createNewCohortSelectColorLeft">
-                                    <span class="create_new_cohort_tab_select_color_left_selected" id="createNewCohortSelectedColorLeft">
-                                      <span class="create_new_cohort_tab_select_color_left_circle" style="background:#1649c7"></span>
-                                    </span>
-                                    <svg width="18" height="18" class="create_new_cohort_tab_select_color_left_arrow" viewBox="0 0 20 20">
-                                      <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
-                                    </svg>
-                                    <div class="create_new_cohort_tab_select_color_left_list" id="createNewCohortColorListLeft">
-                                      <ul>
-                                        <li data-color="#1649c7" style="background:#1649c7"></li>
-                                        <li data-color="#20a88e" style="background:#20a88e"></li>
-                                        <li data-color="#3f3f48" style="background:#3f3f48"></li>
-                                        <li data-color="#fe2e0c" style="background:#fe2e0c"></li>
-                                        <li data-color="#daa520" style="background:#daa520"></li>
-                                      </ul>
-                                    </div>
-                              </div>
-                           </div>
 
 
-            
+
+
+
+
+
+
+
+
+
+<!-- 2-up teacher carousel -->
+<div class="calendar_admin_details_create_cohort_row" id="teacherBlocks">
+  <!-- Teacher 1 -->
+  <div class="teacher-block" data-teacher="1">
+    <div>
+      <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
+        <label>Teacher 1</label>
+        <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher1DropdownBtn">
+          Select Teacher
+          <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
+        </div>
+        <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher1DropdownList">
+          <ul>
+            <li><img src="https://randomuser.me/api/portraits/men/11.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> <span style="margin-left:10px;">Edwards</span></li>
+            <li><img src="https://randomuser.me/api/portraits/women/44.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;"> Daniela</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/31.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;">Hawkins</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/32.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;"> Lane</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/33.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;">Warren</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/52.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;"> Fox</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
+        <label>Class Name</label>
+          <div class="calendar_admin_details_create_cohort_class_btn" id="className1DropdownBtn">
+            Select Class
+            <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
           </div>
-          <div>
-            <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
-              <label>Teacher 2</label>
-              <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher2DropdownBtn">
-                Select Teacher
-                <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
-              </div>
-              <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher2DropdownList">
-                <ul>
-                  <li><img src="https://randomuser.me/api/portraits/women/45.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Maria</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/38.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Joseph</li>
-                  <li><img src="https://randomuser.me/api/portraits/women/32.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Lisa</li>
-                  <li><img src="https://randomuser.me/api/portraits/men/21.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> Fox</li>
-                </ul>
-              </div>
-            </div>
-            <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
-              <label>Class Name</label>
-              <div class="calendar_admin_details_create_cohort_class_btn" id="className2DropdownBtn">
-                Main Class
-                <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
-              </div>
-              <div class="calendar_admin_details_create_cohort_class_list" id="className2DropdownList">
-                <ul>
-                  <li>Main Class</li>
-                  <li>Tutoring Class</li>
-                  <li>Conversational Class</li>
-                </ul>
-              </div>
-            </div>
 
-
-                <div class="cohort_schedule_box">
-                  <div class="cohort_schedule_header">
-                    <span class="cohort_schedule_icon">&#9432;</span>
-                    <span>Tutoring Schedule</span>
-                  </div>
-                  <button type="button" class="cohort_schedule_btn">
-                    Does not repeat
-                    <span class="cohort_schedule_arrow">&#9660;</span>
-                  </button>
-                </div>
-
-
-            
-              <!-- <div class="calendar_admin_details_cohort_tab_time_buttons_row">
-                <button class="calendar_admin_details_create_cohort_time_btn">Start Time</button>
-                <div class="calendar_admin_details_cohort_tab_time_divider"></div>
-                <button class="calendar_admin_details_create_cohort_time_btn">End Time</button>
-              </div> -->
+        <div class="calendar_admin_details_create_cohort_class_list" id="className1DropdownList">
+          <ul>
+            <li>Main Class</li>
+            <li>Tutoring Class</li>
+            <li>Conversational Class</li>
+          </ul>
+        </div>
+      </div>
 
 
 
 
-                <div class="d-flex calendar_admin_details_time_right" style="margin-top: 10px;">
-                  <div class="calendar_admin_details_time_right_time-pill">
-                    <input type="text" class="form-control calendar_admin_details_time_right_time-input" value="9:30 am" autocomplete="off" readonly  style="background-color: #ffffff;"/>
-                    <div class="calendar_admin_details_time_right_time-dropdown"></div>
-                  </div>
-                  <div class="calendar_admin_details_time_right_time-dash">–</div>
-                  <div class="calendar_admin_details_time_right_time-pill">
-                    <input type="text" class="form-control calendar_admin_details_time_right_time-input" value="10:30 am" autocomplete="off" readonly style="background-color: #ffffff;"/>
-                    <div class="calendar_admin_details_time_right_time-dropdown"></div>
-                  </div>
-                </div>
 
 
 
-              <div class="calendar_admin_details_cohort_tab_timezone_wrapper_right" >
-                <label class="calendar_admin_details_cohort_tab_timezone_label_right">Event time zone (Right)</label>
-                <div class="calendar_admin_details_cohort_tab_timezone_dropdown_right" id="eventTimezoneDropdownRight">
-                  <span id="eventTimezoneSelectedRight">(GMT+05:00) Pakistan</span>
-                  <svg class="calendar_admin_details_cohort_tab_timezone_arrow_right" width="18" height="18" viewBox="0 0 20 20">
-                    <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
-                  </svg>
-                  <div class="calendar_admin_details_cohort_tab_timezone_list_right" id="eventTimezoneDropdownListRight">
-                    <ul>
-                      <li>(GMT+00:00) London</li>
-                      <li>(GMT+01:00) Berlin, Paris</li>
-                      <li>(GMT+03:00) Moscow, Nairobi</li>
-                      <li>(GMT+05:00) Pakistan</li>
-                      <li>(GMT+05:30) India</li>
-                      <li>(GMT+08:00) Beijing, Singapore</li>
-                      <li>(GMT+09:00) Tokyo, Seoul</li>
-                      <li>(GMT+10:00) Sydney</li>
-                      <li>(GMT-05:00) Eastern Time (US & Canada)</li>
-                      <li>(GMT-06:00) Central Time (US & Canada)</li>
-                      <li>(GMT-07:00) Mountain Time (US & Canada)</li>
-                      <li>(GMT-08:00) Pacific Time (US & Canada)</li>
-                      <!-- Add more as needed -->
-                    </ul>
-                  </div>
-                </div>
-              </div>
 
-            <label style="margin-top:20px;">Start On</label>
-            <button class="conference_modal_date_btn">Select Date</button>
+
+      <div class="cohort_schedule_box">
+        <div class="cohort_schedule_header">
+          <span class="cohort_schedule_icon">&#9432;</span>
+          <span>Class Schedule</span>
+        </div>
+        <button type="button" class="cohort_schedule_btn">
+          Does not repeat
+          <span class="cohort_schedule_arrow">&#9660;</span>
+        </button>
+      </div>
 
 
 
-                            <div class="create_new_cohort_tab_select_color_right_row">
-                              <label class="create_new_cohort_tab_select_color_right_label">Find a time</label>
-                              <div class="create_new_cohort_tab_select_color_right_dropdown" id="createNewCohortSelectColorRight">
-                                <span class="create_new_cohort_tab_select_color_right_selected" id="createNewCohortSelectedColorRight">
-                                  <span class="create_new_cohort_tab_select_color_right_circle" style="background:#1649c7"></span>
-                                </span>
-                                <svg width="18" height="18" class="create_new_cohort_tab_select_color_right_arrow" viewBox="0 0 20 20">
-                                  <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
-                                </svg>
-                                <div class="create_new_cohort_tab_select_color_right_list" id="createNewCohortColorListRight">
-                                  <ul>
-                                    <li data-color="#1649c7" style="background:#1649c7"></li>
-                                    <li data-color="#20a88e" style="background:#20a88e"></li>
-                                    <li data-color="#3f3f48" style="background:#3f3f48"></li>
-                                    <li data-color="#fe2e0c" style="background:#fe2e0c"></li>
-                                    <li data-color="#daa520" style="background:#daa520"></li>
-                                  </ul>
-                                </div>
-                              </div>
-                            </div>
+      
+      <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
+        <div class="custom-time-pill">
+          <input type="text" class="form-control time-input" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+          <div class="custom-time-dropdown"></div>
+        </div>
+        <div class="time-dash">–</div>
+        <div class="custom-time-pill">
+          <input type="text" class="form-control time-input" value="10:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+          <div class="custom-time-dropdown"></div>
+        </div>
+      </div>
 
 
+
+
+
+      <div class="calendar_admin_details_cohort_tab_timezone_wrapper" style="margin-top:10px;">
+        <label class="calendar_admin_details_cohort_tab_timezone_label">Event time zone</label>
+        <div class="calendar_admin_details_cohort_tab_timezone_dropdown" id="eventTimezoneDropdown">
+          <span id="eventTimezoneSelected">(GMT-05:00) Eastern</span>
+          <svg class="calendar_admin_details_cohort_tab_timezone_arrow" width="18" height="18" viewBox="0 0 20 20">
+            <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="calendar_admin_details_cohort_tab_timezone_list" id="eventTimezoneDropdownList">
+            <ul>
+              <li>(GMT-12:00) International Date Line West</li>
+              <li>(GMT-11:00) Midway Island, Samoa</li>
+              <li>(GMT-10:00) Hawaii</li>
+              <li>(GMT-09:00) Alaska</li>
+              <li>(GMT-08:00) Pacific Time (US & Canada)</li>
+              <li>(GMT-07:00) Mountain Time (US & Canada)</li>
+              <li>(GMT-06:00) Central Time (US & Canada)</li>
+              <li>(GMT-05:00) Eastern Time (US & Canada)</li>
+              <li>(GMT+00:00) London</li>
+              <li>(GMT+01:00) Berlin, Paris</li>
+              <li>(GMT+03:00) Moscow, Nairobi</li>
+              <li>(GMT+05:00) Pakistan</li>
+              <li>(GMT+05:30) India</li>
+              <li>(GMT+08:00) Beijing, Singapore</li>
+              <li>(GMT+09:00) Tokyo, Seoul</li>
+              <li>(GMT+10:00) Sydney</li>
+            </ul>
           </div>
         </div>
-        <div class="calendar_admin_details_create_cohort_bottom">
-          <div class="calendar_admin_details_create_cohort_switch">
-            <div class="calendar_admin_details_create_cohort_toggle" id="toggleActive"></div> Active
-          </div>
-          <div class="calendar_admin_details_create_cohort_switch">
-            <div class="calendar_admin_details_create_cohort_toggle" id="toggleAvailable"></div> Available
+      </div>
+
+      <label style="margin-top:20px;">Start On</label>
+      <button class="conference_modal_date_btn">Select Date</button>
+
+      <div class="create_new_cohort_tab_select_color_left_row">
+        <label class="create_new_cohort_tab_select_color_left_label">Find a time</label>
+        <div class="create_new_cohort_tab_select_color_left_dropdown" id="createNewCohortSelectColorLeft">
+          <span class="create_new_cohort_tab_select_color_left_selected" id="createNewCohortSelectedColorLeft">
+            <span class="create_new_cohort_tab_select_color_left_circle" style="background:#1649c7"></span>
+          </span>
+          <svg width="18" height="18" class="create_new_cohort_tab_select_color_left_arrow" viewBox="0 0 20 20">
+            <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="create_new_cohort_tab_select_color_left_list" id="createNewCohortColorListLeft">
+            <ul>
+              <li data-color="#1649c7" style="background:#1649c7"></li>
+              <li data-color="#20a88e" style="background:#20a88e"></li>
+              <li data-color="#3f3f48" style="background:#3f3f48"></li>
+              <li data-color="#fe2e0c" style="background:#fe2e0c"></li>
+              <li data-color="#daa520" style="background:#daa520"></li>
+            </ul>
           </div>
         </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <!-- Teacher 2 -->
+  <div class="teacher-block" data-teacher="2">
+    <div>
+      <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
+        <label>Teacher 2</label>
+        <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher2DropdownBtn">
+          Select Teacher
+          <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
+        </div>
+        <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher2DropdownList">
+          <ul>
+            <li><img src="https://randomuser.me/api/portraits/women/45.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;">Maria</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/38.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> <span style="margin-left:10px;">Joseph</span></li>
+            <li><img src="https://randomuser.me/api/portraits/women/32.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> <span style="margin-left:10px;">Lisa</span></li>
+            <li><img src="https://randomuser.me/api/portraits/men/21.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> <span style="margin-left:10px;">Fox</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
+        <label>Class Name</label>
+        
+          <div class="calendar_admin_details_create_cohort_class_btn" id="className2DropdownBtn">
+            Select Class
+            <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
+          </div>
+
+        <div class="calendar_admin_details_create_cohort_class_list" id="className2DropdownList">
+          <ul>
+            <li>Main Class</li>
+            <li>Tutoring Class</li>
+            <li>Conversational Class</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="cohort_schedule_box">
+        <div class="cohort_schedule_header">
+          <span class="cohort_schedule_icon">&#9432;</span>
+          <span>Tutoring Schedule</span>
+        </div>
+        <button type="button" class="cohort_schedule_btn">
+          Does not repeat
+          <span class="cohort_schedule_arrow">&#9660;</span>
+        </button>
+      </div>
+
+      <div class="d-flex calendar_admin_details_time_right" style="margin-top:10px;">
+        <div class="calendar_admin_details_time_right_time-pill">
+          <input type="text" class="form-control calendar_admin_details_time_right_time-input" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+          <div class="calendar_admin_details_time_right_time-dropdown"></div>
+        </div>
+        <div class="calendar_admin_details_time_right_time-dash">–</div>
+        <div class="calendar_admin_details_time_right_time-pill">
+          <input type="text" class="form-control calendar_admin_details_time_right_time-input" value="10:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+          <div class="calendar_admin_details_time_right_time-dropdown"></div>
+        </div>
+      </div>
+
+      <div class="calendar_admin_details_cohort_tab_timezone_wrapper_right">
+        <label class="calendar_admin_details_cohort_tab_timezone_label_right">Event time zone</label>
+        <div class="calendar_admin_details_cohort_tab_timezone_dropdown_right" id="eventTimezoneDropdownRight">
+          <span id="eventTimezoneSelectedRight">(GMT+05:00) Pakistan</span>
+          <svg class="calendar_admin_details_cohort_tab_timezone_arrow_right" width="18" height="18" viewBox="0 0 20 20">
+            <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="calendar_admin_details_cohort_tab_timezone_list_right" id="eventTimezoneDropdownListRight">
+            <ul>
+              <li>(GMT+00:00) London</li>
+              <li>(GMT+01:00) Berlin, Paris</li>
+              <li>(GMT+03:00) Moscow, Nairobi</li>
+              <li>(GMT+05:00) Pakistan</li>
+              <li>(GMT+05:30) India</li>
+              <li>(GMT+08:00) Beijing, Singapore</li>
+              <li>(GMT+09:00) Tokyo, Seoul</li>
+              <li>(GMT+10:00) Sydney</li>
+              <li>(GMT-05:00) Eastern Time (US & Canada)</li>
+              <li>(GMT-06:00) Central Time (US & Canada)</li>
+              <li>(GMT-07:00) Mountain Time (US & Canada)</li>
+              <li>(GMT-08:00) Pacific Time (US & Canada)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <label style="margin-top:20px;">Start On</label>
+      <button class="conference_modal_date_btn">Select Date</button>
+
+      
+      <div class="create_new_cohort_tab_select_color_right_row">
+        <label class="create_new_cohort_tab_select_color_right_label">Find a time</label>
+        <div class="create_new_cohort_tab_select_color_right_dropdown" id="createNewCohortSelectColorRight">
+          <span class="create_new_cohort_tab_select_color_right_selected" id="createNewCohortSelectedColorRight">
+            <span class="create_new_cohort_tab_select_color_right_circle" style="background:#1649c7"></span>
+          </span>
+          <svg width="18" height="18" class="create_new_cohort_tab_select_color_right_arrow" viewBox="0 0 20 20">
+            <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+          <div class="create_new_cohort_tab_select_color_right_list" id="createNewCohortColorListRight">
+            <ul>
+              <li data-color="#1649c7" style="background:#1649c7"></li>
+              <li data-color="#20a88e" style="background:#20a88e"></li>
+              <li data-color="#3f3f48" style="background:#3f3f48"></li>
+              <li data-color="#fe2e0c" style="background:#fe2e0c"></li>
+              <li data-color="#daa520" style="background:#daa520"></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
         <button class="calendar_admin_details_create_cohort_btn">Create Cohort</button>
       </div>
 
@@ -1227,9 +1515,20 @@
           
           
           <div style="display:flex; gap:12px; align-items:center; margin-bottom:7px;">
-            <button class="conference_modal_time_btn">Start Time</button>
-            <span>-</span>
-            <button class="conference_modal_time_btn">End Time</button>
+                      
+            <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
+              <div class="custom-time-pill">
+                <input type="text" class="form-control time-input" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                <div class="custom-time-dropdown"></div>
+              </div>
+              <div class="time-dash">–</div>
+              <div class="custom-time-pill">
+                <input type="text" class="form-control time-input" value="10:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                <div class="custom-time-dropdown"></div>
+              </div>
+            </div>
+
+
             <a class="conference_modal_findtime_link" href="#">Find a time</a>
             <div class="color-dropdown-wrapper">
               <button type="button" class="color-dropdown-toggle" id="peerTalkColorDropdownToggle" style="width:75px;">
@@ -1247,10 +1546,44 @@
           </div>
 
 
-          <select class="conference_modal_timezone">
-            <option>(GMT-05:00) Eastern</option>
-            <option>(GMT+05:00) Pakistan</option>
-          </select>
+
+
+
+
+          
+          <div class="calendar_admin_details_cohort_tab_timezone_wrapper" style="margin-top:10px;">
+            <label class="calendar_admin_details_cohort_tab_timezone_label">Event time zone</label>
+            <div class="calendar_admin_details_cohort_tab_timezone_dropdown" id="eventTimezoneDropdown_peer_talk_tab_wrapper">
+              <span id="eventTimezoneDropdown_peer_talk_tab_selected">(GMT-05:00) Eastern</span>
+              <svg class="calendar_admin_details_cohort_tab_timezone_arrow" width="18" height="18" viewBox="0 0 20 20">
+                <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="calendar_admin_details_cohort_tab_timezone_list" id="eventTimezoneDropdown_peer_talk_tab_list">
+                <ul>
+                  <li>(GMT-12:00) International Date Line West</li>
+                  <li>(GMT-11:00) Midway Island, Samoa</li>
+                  <li>(GMT-10:00) Hawaii</li>
+                  <li>(GMT-09:00) Alaska</li>
+                  <li>(GMT-08:00) Pacific Time (US & Canada)</li>
+                  <li>(GMT-07:00) Mountain Time (US & Canada)</li>
+                  <li>(GMT-06:00) Central Time (US & Canada)</li>
+                  <li>(GMT-05:00) Eastern Time (US & Canada)</li>
+                  <li>(GMT+00:00) London</li>
+                  <li>(GMT+01:00) Berlin, Paris</li>
+                  <li>(GMT+03:00) Moscow, Nairobi</li>
+                  <li>(GMT+05:00) Pakistan</li>
+                  <li>(GMT+05:30) India</li>
+                  <li>(GMT+08:00) Beijing, Singapore</li>
+                  <li>(GMT+09:00) Tokyo, Seoul</li>
+                  <li>(GMT+10:00) Sydney</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+
+
           <div class="conference_modal_fieldrow">
             <div>
               <span class="conference_modal_label">Attending Cohorts</span>
@@ -1366,10 +1699,21 @@
             <button class="conference_modal_date_btn">Select Date</button>
           </div>
         </div>
+
         <div style="display:flex; gap:12px; align-items:center; margin-bottom:7px;">
-          <button class="conference_modal_time_btn">Start Time</button>
-          <span>-</span>
-          <button class="conference_modal_time_btn">End Time</button>
+
+            <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
+              <div class="custom-time-pill">
+                <input type="text" class="form-control time-input" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                <div class="custom-time-dropdown"></div>
+              </div>
+              <div class="time-dash">–</div>
+              <div class="custom-time-pill">
+                <input type="text" class="form-control time-input" value="10:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                <div class="custom-time-dropdown"></div>
+              </div>
+            </div>
+
           <a class="conference_modal_findtime_link" href="#">Find a time</a>
 
 
@@ -1392,10 +1736,44 @@
         
         
         </div>
-        <select class="conference_modal_timezone">
-          <option>(GMT-05:00) Eastern</option>
-          <option>(GMT+05:00) Pakistan</option>
-        </select>
+
+
+
+
+          <div class="calendar_admin_details_cohort_tab_timezone_wrapper" style="margin-top:10px;">
+            <label class="calendar_admin_details_cohort_tab_timezone_label">Event time zone</label>
+            <div class="calendar_admin_details_cohort_tab_timezone_dropdown" id="eventTimezoneDropdown_conference_tab_wrapper">
+              <span id="eventTimezoneDropdown_conference_tab_selected">(GMT-05:00) Eastern</span>
+              <svg class="calendar_admin_details_cohort_tab_timezone_arrow" width="18" height="18" viewBox="0 0 20 20">
+                <path d="M7 8l3 3 3-3" stroke="#232323" stroke-width="2" fill="none" stroke-linecap="round"/>
+              </svg>
+              <div class="calendar_admin_details_cohort_tab_timezone_list" id="eventTimezoneDropdown_conference_tab_list">
+                <ul>
+                  <li>(GMT-12:00) International Date Line West</li>
+                  <li>(GMT-11:00) Midway Island, Samoa</li>
+                  <li>(GMT-10:00) Hawaii</li>
+                  <li>(GMT-09:00) Alaska</li>
+                  <li>(GMT-08:00) Pacific Time (US & Canada)</li>
+                  <li>(GMT-07:00) Mountain Time (US & Canada)</li>
+                  <li>(GMT-06:00) Central Time (US & Canada)</li>
+                  <li>(GMT-05:00) Eastern Time (US & Canada)</li>
+                  <li>(GMT+00:00) London</li>
+                  <li>(GMT+01:00) Berlin, Paris</li>
+                  <li>(GMT+03:00) Moscow, Nairobi</li>
+                  <li>(GMT+05:00) Pakistan</li>
+                  <li>(GMT+05:30) India</li>
+                  <li>(GMT+08:00) Beijing, Singapore</li>
+                  <li>(GMT+09:00) Tokyo, Seoul</li>
+                  <li>(GMT+10:00) Sydney</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+
+
+
+
         <div class="conference_modal_fieldrow">
           <div>
             <span class="conference_modal_label">Attending Cohorts</span>
@@ -1538,14 +1916,14 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
   alert(JSON.stringify(peerTalkData, null, 2));
 });
 
-      $('#peerTalkColorDropdownToggle').click(function(e){
-        e.stopPropagation();
-        $(this).toggleClass('active');
-        $('#peerTalkColorDropdownList').toggle();
-        // Close the conference color dropdown if open
-        $('#colorDropdownList').hide();
-        $('#colorDropdownToggle').removeClass('active');
-      });
+      // $('#peerTalkColorDropdownToggle').click(function(e){
+      //   e.stopPropagation();
+      //   $(this).toggleClass('active');
+      //   $('#peerTalkColorDropdownList').toggle();
+      //   // Close the conference color dropdown if open
+      //   $('#colorDropdownList').hide();
+      //   $('#colorDropdownToggle').removeClass('active');
+      // });
 
         $('#peerTalkColorDropdownList .color-dropdown-color').click(function(e){
         e.stopPropagation();
@@ -1556,10 +1934,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
         $('#peerTalkColorDropdownList').hide();
         $('#peerTalkColorDropdownToggle').removeClass('active');
       });
-
-
-
-
+      
       // Modal open/close
       $('.calendar_admin_details_create_cohort_open').click(function () {
         $('#calendar_admin_details_create_cohort_modal_backdrop').fadeIn();
@@ -1574,6 +1949,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'block');
             $('#classTabContent').css('display', 'none');
+            $('#manage_cohort_tab_content').css('display', 'none');
       });
 
 
@@ -1598,6 +1974,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'block');
+            $('#manage_cohort_tab_content').css('display', 'none');
 
       });
 
@@ -1615,6 +1992,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'none');
+            $('#manage_cohort_tab_content').css('display', 'none');
       });
 
       //=======================peertalk Tab=========================//
@@ -1630,6 +2008,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'none');
+            $('#manage_cohort_tab_content').css('display', 'none');
 
       });
 
@@ -1646,6 +2025,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'none');
+             $('#manage_cohort_tab_content').css('display', 'none');
       });
 
 
@@ -1678,6 +2058,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'none');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'none');
+            $('#manage_cohort_tab_content').css('display', 'none');
       });
 
 
@@ -1694,11 +2075,10 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
             $('#addExtraSlotsTabContent').css('display', 'block');           
             $('#mainModalContent').css('display', 'none');
             $('#classTabContent').css('display', 'none');
+            $('#manage_cohort_tab_content').css('display', 'none');
       });
 
       
-
-
       // Tabs - Peer Talk tab shows Conference content
       $('.calendar_admin_details_create_cohort_tab').click(function () {
         $('.calendar_admin_details_create_cohort_tab').removeClass('active');
@@ -1717,25 +2097,32 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
         }
       });
 
+
       // Dropdowns
-      $('#cohortDropdownBtn').click(function (e) {
-        e.stopPropagation();
-        $('#cohortDropdownList').toggle();
-        $('#shortNameDropdownList, #teacher1DropdownList, #teacher2DropdownList, #className1DropdownList, #className2DropdownList').hide();
-      });
-      $('#cohortDropdownList li').click(function () {
-        $('#cohortDropdownBtn').contents().first()[0].textContent = $(this).text() + " ";
-        $('#cohortDropdownList').hide();
-      });
-      $('#shortNameDropdownBtn').click(function (e) {
-        e.stopPropagation();
-        $('#shortNameDropdownList').toggle();
-        $('#cohortDropdownList, #teacher1DropdownList, #teacher2DropdownList, #className1DropdownList, #className2DropdownList').hide();
-      });
-      $('#shortNameDropdownList li').click(function () {
-        $('#shortNameDropdownBtn').contents().first()[0].textContent = $(this).text() + " ";
-        $('#shortNameDropdownList').hide();
-      });
+      // $('#cohortDropdownBtn').click(function (e) {
+      //   e.stopPropagation();
+      //   $('#cohortDropdownList').toggle();
+      //   $('#shortNameDropdownList, #teacher1DropdownList, #teacher2DropdownList, #className1DropdownList, #className2DropdownList').hide();
+      // });
+      // $('#cohortDropdownList li').click(function () {
+      //   $('#cohortDropdownBtn').contents().first()[0].textContent = $(this).text() + " ";
+      //   $('#cohortDropdownList').hide();
+      // });
+      // $('#shortNameDropdownBtn').click(function (e) {
+      //   e.stopPropagation();
+      //   $('#shortNameDropdownList').toggle();
+      //   $('#cohortDropdownList, #teacher1DropdownList, #teacher2DropdownList, #className1DropdownList, #className2DropdownList').hide();
+      // });
+      // $('#shortNameDropdownList li').click(function () {
+      //   $('#shortNameDropdownBtn').contents().first()[0].textContent = $(this).text() + " ";
+      //   $('#shortNameDropdownList').hide();
+      // });
+
+
+
+
+
+
       $('#teacher1DropdownBtn').click(function(e){
         e.stopPropagation();
         $('#teacher1DropdownList').toggle();
@@ -1822,6 +2209,10 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
               </li>
             `);
           });
+
+
+
+
 
 
       $(document).click(function () {
@@ -1951,6 +2342,7 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
         renderCalendarModal();
       });
       function renderCalendarModal(){
+
         const monthNames = ["January","February","March","April","May","June","July","August","September","October","November","December"];
         let y = calendarModalMonth.year, m = calendarModalMonth.month;
         $('#calendarDateMonth').text(`${monthNames[m]} ${y}`);
@@ -1981,13 +2373,80 @@ $('#peerTalkScheduleBtn').on('click', function(e) {
         selectedCalendarDate = new Date(calendarModalMonth.year, calendarModalMonth.month, day);
       });
       $('.calendar_admin_details_create_cohort_calendar_done_btn').click(function(){
+
         if(selectedCalendarDate && calendarDateTargetBtn){
           let d = selectedCalendarDate;
           let nice = d.toLocaleDateString('en-GB', { day: '2-digit', month:'short', year:'numeric' });
           calendarDateTargetBtn.text(nice);
+           setCohortDate(selectedCalendarDate); // updates #cohortInput
           $('#calendarDateModalBackdrop').fadeOut();
         }
       });
+
+
+
+
+
+
+
+
+// ================== save value in the text field above in create cohort modal (MMDDYY) ================== //
+function setCohortDate(dateVal, fieldSel) {
+  var $cohort = $(fieldSel || '#cohortInput');
+  if (!$cohort.length) return false;
+
+  // Get a Date object
+  var d;
+  if (dateVal instanceof Date) {
+    d = dateVal;
+  } else if (typeof dateVal === 'string' && dateVal.trim()) {
+    // Try to parse strings like "Aug/21/2025" or "2025-08-21"
+    var safe = dateVal.replace(/-/g, '/'); // mild normalization
+    d = new Date(safe);
+  } else {
+    return false;
+  }
+  if (isNaN(d)) return false;
+
+  // Build MMDDYY, zero-padded
+  var mm = String(d.getMonth() + 1).padStart(2, '0');  // 01-12
+  var dd = String(d.getDate()).padStart(2, '0');       // 01-31
+  var yy = String(d.getFullYear()).slice(-2);          // last two digits
+  var mdy6 = mm + dd + yy;                              // e.g., "082125"
+
+  // Use current value or placeholder as template: e.g., "CO1-#-#####-###"
+  var template = ($cohort.val() || $cohort.attr('placeholder') || '').trim();
+  if (!template) {
+    $cohort.val(mdy6).trigger('input').trigger('change');
+    return mdy6;
+  }
+
+  // Prefer exact 4-part pattern: seg1 - seg2 - seg3 - seg4  (replace seg2)
+  var rx = /^([^-]+)-[^-]+-[^-]+-([^-]+)$/; // capture seg1 and seg4
+  var updated;
+
+  if (rx.test(template)) {
+    updated = template.replace(rx, function(_, seg1, seg4){
+      return seg1 + '-' + mdy6 + '-' + seg4;
+    });
+  } else {
+    // Fallback: try literal replacement of "#-#####"
+    updated = template.replace(/#-#####/, mdy6);
+    // If no placeholder pattern exists, just set the field to the date
+    if (updated === template) updated = mdy6;
+  }
+
+  $cohort.val(updated).trigger('input').trigger('change');
+  return updated;
+}
+// ================== end ================== //
+
+
+
+
+
+
+
       $('#calendarDateModalBackdrop').click(function(e){
         if(e.target === this) $(this).fadeOut();
       });
@@ -2224,7 +2683,148 @@ $(document).on('click', '#teacher1DropdownList li', function () {
   $cohort.val(updated).trigger('input').trigger('change');
 });
 
+
+
+
 </script>
+<script>
+// Show tooltip on hover/focus for BOTH fields; place BELOW the input
+(function($){
+  $('.cohort-tooltip-target')
+    .on('mouseenter focus', function(){
+      $(this).siblings('.custom-tooltip').stop(true,true).fadeIn(140);
+    })
+    .on('mouseleave blur', function(){
+      $(this).siblings('.custom-tooltip').stop(true,true).fadeOut(140);
+    });
+})(jQuery);
+</script>
+
+
+
+
+<script>
+  // ------- Class Name dropdown (snapshot look & behavior) -------
+function wireClassDropdown(btnSel, listSel){
+  // open/close
+  $(btnSel).off('click').on('click', function(e){
+    e.stopPropagation();
+    const $btn  = $(this);
+    const $list = $(listSel);
+
+    // close other open class menus
+    $('.calendar_admin_details_create_cohort_class_list').not($list).hide();
+    $('.calendar_admin_details_create_cohort_class_btn').not($btn).removeClass('open');
+
+    // toggle this one
+    $btn.toggleClass('open');
+    if($btn.hasClass('open')){
+      // width already 100% (wrapper = button width), just show
+      $list.show();
+
+      // highlight current selection
+      const current = ($btn.contents().first()[0].textContent || '').trim();
+      $list.find('li').removeClass('selected')
+           .filter(function(){ return $(this).text().trim() === current; })
+           .addClass('selected');
+    } else {
+      $list.hide();
+    }
+  });
+
+  // choose item
+  $(listSel).off('click', 'li').on('click', 'li', function(e){
+    e.stopPropagation();
+    const text = $(this).text().trim();
+    // set button label (keep arrow svg)
+    const $btn = $(btnSel);
+    const svg  = $btn.find('svg').prop('outerHTML');
+    $btn.html(text + ' ' + svg);
+
+    // close menu
+    $(listSel).hide();
+    $btn.removeClass('open');
+  });
+}
+
+// apply to Teacher 1 & 2
+wireClassDropdown('#className1DropdownBtn', '#className1DropdownList');
+wireClassDropdown('#className2DropdownBtn', '#className2DropdownList');
+
+// close on outside click
+$(document).off('click.classdd').on('click.classdd', function(){
+  $('.calendar_admin_details_create_cohort_class_list').hide();
+  $('.calendar_admin_details_create_cohort_class_btn').removeClass('open');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+$(document).ready(function() {
+  const $dropdownWrapper = $("#eventTimezoneDropdown_conference_tab_wrapper");
+  const $dropdownList = $("#eventTimezoneDropdown_conference_tab_list");
+  const $selected = $("#eventTimezoneDropdown_conference_tab_selected");
+
+  // Toggle dropdown
+  $dropdownWrapper.on("click", function(e) {
+    e.stopPropagation(); // prevent bubbling
+    $dropdownList.toggle();
+  });
+
+  // Select timezone
+  $dropdownList.find("li").on("click", function(e) {
+    e.stopPropagation();
+    const selectedText = $(this).text();
+    $selected.text(selectedText);
+    $dropdownList.hide();
+  });
+
+  // Close when clicking outside
+  $(document).on("click", function() {
+    $dropdownList.hide();
+  });
+});
+
+$(document).ready(function() {
+  const $dropdownWrapper = $("#eventTimezoneDropdown_peer_talk_tab_wrapper");
+  const $dropdownList = $("#eventTimezoneDropdown_peer_talk_tab_list");
+  const $selected = $("#eventTimezoneDropdown_peer_talk_tab_selected");
+
+  // Toggle dropdown
+  $dropdownWrapper.on("click", function(e) {
+    e.stopPropagation(); // prevent bubbling
+    $dropdownList.toggle();
+  });
+
+  // Select timezone
+  $dropdownList.find("li").on("click", function(e) {
+    e.stopPropagation();
+    const selectedText = $(this).text();
+    $selected.text(selectedText);
+    $dropdownList.hide();
+  });
+
+  // Close when clicking outside
+  $(document).on("click", function() {
+    $dropdownList.hide();
+  });
+});
+
+</script>
+
+
+
+<script src="js/calendar_admin_details_create_cohort_plus_icon_new_content.js"></script>
 
 <?php require_once('calendar_admin_details_create_cohort_select_date.php');?>
 <?php require_once('calendar_admin_details_create_cohort_tab_does_repeat.php');?>

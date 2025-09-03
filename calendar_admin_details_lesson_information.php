@@ -1,9 +1,9 @@
 
 <!-- ===== Trigger button (demo) ===== -->
-<button type="button" class="calendar_admin_details_lesson_information_btn"
+<!-- <button type="button" class="calendar_admin_details_lesson_information_btn"
         style="border:1.5px solid #e7e7ef;border-radius:10px;padding:10px 16px;font-weight:700;background:#111;color:#fff;">
   Lesson info
-</button>
+</button> -->
 
 <!-- ===== Toast (top-right notification) ===== -->
 <div id="calendar_admin_toast" class="calendar_admin_toast" role="status" aria-live="polite" aria-atomic="true">
@@ -83,18 +83,25 @@
         This cancellation is final, and there will be no makeup session. Let us know if any further action is needed.
       </p>
 
-      <label class="form-label fw-semibold mb-2">Please choose a reason for cancel lesson</label>
-      <div class="calendar_admin_cancel_selectwrap mb-3">
-        <select class="form-select" id="calendar_admin_cancel_reason" aria-label="Select reason">
-          <option value="" selected disabled>Select Reason</option>
-          <option>Emergency</option>
-          <option>Health</option>
-          <option>Scheduling conflict</option>
-          <option>Technical issues</option>
-          <option>Other</option>
-        </select>
-        <span class="calendar_admin_cancel_select_icon" aria-hidden="true">▾</span>
-      </div>
+          <label class="form-label fw-semibold mb-2">Please choose a reason for cancel lesson</label>
+            <!-- Custom dropdown: Reschedule reason -->
+            <div class="ca_dd_wrap" id="resched_reason_dd">
+              <button type="button" class="ca_dd_btn" aria-haspopup="listbox" aria-expanded="false">
+                <span class="ca_dd_placeholder">Select Reason</span>
+                <span class="ca_dd_value" style="display:none;"></span>
+                <span class="ca_dd_caret" aria-hidden="true">▾</span>
+              </button>
+
+              <div class="ca_dd_menu" role="listbox" tabindex="-1">
+                <div class="ca_dd_opt" role="option" data-value="cant-make">He’s not able to make it today.</div>
+                <div class="ca_dd_opt" role="option" data-value="timing">The timing isn’t working out today.</div>
+                <div class="ca_dd_opt" role="option" data-value="tech-issues">There are some tech issues, so we can’t run the class.</div>
+                <div class="ca_dd_opt" role="option" data-value="teacher-na">The teacher isn’t available right now.</div>
+              </div>
+
+              <!-- Keep same ID as your old <select> so existing code keeps working -->
+              <input type="hidden" id="resched_reason_step3" value="">
+            </div>
 
       <label for="calendar_admin_cancel_message" class="form-label fw-semibold mb-2">Message for Daniela • Optional</label>
       <textarea id="calendar_admin_cancel_message" class="form-control calendar_admin_cancel_textarea mb-3" rows="3" placeholder="Message for Daniela"></textarea>
@@ -158,17 +165,24 @@
 
       <div class="calendar_admin_reschedule_label">Date and time</div>
 
-      <div class="ca_res_selectwrap mb-2">
-        <select class="form-select" id="resched_duration">
-          <option selected>50 Minutes ( Standard time )</option>
-          <option>25 Minutes ( Short )</option>
-          <option>75 Minutes ( Extended )</option>
-        </select>
-        <span class="ca_res_select_icon" aria-hidden="true">▾</span>
-      </div>
+        <!-- Custom dropdown: Duration -->
+        <div class="ca_dd_wrap" id="resched_duration_dd">
+          <button type="button" class="ca_dd_btn" aria-haspopup="listbox" aria-expanded="false">
+            <span class="ca_dd_placeholder">50 Minutes ( Standard time )</span>
+            <span class="ca_dd_value" style="display:none;"></span>
+            <span class="ca_dd_caret" aria-hidden="true">▾</span>
+          </button>
 
+          <div class="ca_dd_menu" role="listbox" tabindex="-1">
+            <div class="ca_dd_opt" role="option" data-value="25">25 Minutes</div>
+            <div class="ca_dd_opt" role="option" data-value="50">50 Minutes</div>
+            <div class="ca_dd_opt" role="option" data-value="60">1 Hour</div>
+            <div class="ca_dd_opt" role="option" data-value="90">1.5 Hour</div>
+          </div>
 
-
+          <!-- Keep the SAME id your JS uses -->
+          <input type="hidden" id="resched_duration" value="50">
+        </div>
 
 <div class="ca_res_row">
   <!-- DATE FIELD (no dropdown) -->
@@ -662,6 +676,47 @@ require_once('calendar_admin_details_lesson_information_cancel_lesson.php'); */?
   display: none;
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* === Custom dropdown (snapshot style) === */
+.ca_dd_wrap{ position:relative; }
+.ca_dd_btn{
+  width:100%; height:58px;
+  background:#fff; border:1.6px solid #e1e3eb; border-radius:12px;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:14px 16px; font-size:1.05rem; line-height:1.2; font-weight:600;
+  box-shadow:0 2px 10px rgba(20,20,20,.03);
+}
+.ca_dd_btn:focus{ outline:2px solid #e9e9f5; outline-offset:2px; }
+.ca_dd_placeholder{ color:#9aa3b2; }
+.ca_dd_value{ color:#1e1f25; font-weight:700; }
+.ca_dd_caret{ margin-left:12px; font-size:22px; color:#222; line-height:1; }
+
+.ca_dd_menu{
+  position:absolute; left:0; right:0; top:100%; margin-top:10px;
+  background:#fff; border-radius:14px; border:1px solid #ececf3;
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+  padding:12px 0; display:none; z-index:6000;  /* above modal content */
+  max-height:320px; overflow:auto;
+}
+.ca_dd_opt{
+  padding:16px 18px; font-size:1.02rem; line-height:1.5;
+  color:#1e1f25; font-weight:700; cursor:pointer;
+}
+.ca_dd_opt:hover, .ca_dd_opt[aria-selected="true"]{ background:#f7f8fb; }
+
 </style>
 
 <script>
@@ -761,7 +816,13 @@ require_once('calendar_admin_details_lesson_information_cancel_lesson.php'); */?
   $('.calendar_admin_toast_close').on('click', hideToast);
 
   // Openers
-  $('.calendar_admin_details_lesson_information_btn').on('click', openLessonInfo);
+  //$('.calendar_admin_details_lesson_information_btn').on('click', openLessonInfo);
+
+  $(document).on('click', '.event.e-green', function () {
+  openLessonInfo();
+  });
+
+
   $('#calendar_admin_details_lesson_information_open_chat').on('click', openChatDrawer);
   $('#calendar_admin_details_lesson_information_cancel_trigger').on('click', openCancelModal);
 
@@ -850,4 +911,123 @@ require_once('calendar_admin_details_lesson_information_cancel_lesson.php'); */?
   });
 
 })(jQuery);
+
+
+
+
+
+
+
+// ===== Custom dropdown behavior (Reschedule reason step 3) =====
+(function($){
+  var $wrap  = $('#resched_reason_dd');
+  var $btn   = $wrap.find('.ca_dd_btn');
+  var $menu  = $wrap.find('.ca_dd_menu');
+  var $ph    = $wrap.find('.ca_dd_placeholder');
+  var $valEl = $wrap.find('.ca_dd_value');
+  var $hidden= $('#resched_reason_step3');
+
+  function openMenu(){
+    $menu.stop(true,true).fadeIn(120);
+    $btn.attr('aria-expanded','true');
+  }
+  function closeMenu(){
+    $menu.stop(true,true).fadeOut(120);
+    $btn.attr('aria-expanded','false');
+  }
+
+  $btn.on('click', function(e){
+    e.stopPropagation();
+    ($menu.is(':visible') ? closeMenu() : openMenu());
+  });
+
+  // Select option
+  $menu.on('click', '.ca_dd_opt', function(e){
+    var $opt = $(this);
+    $menu.find('.ca_dd_opt').removeAttr('aria-selected');
+    $opt.attr('aria-selected','true');
+
+    var text  = $opt.text().trim();
+    var value = $opt.data('value') || text;
+
+    $hidden.val(value).trigger('change');
+    $valEl.text(text).show();
+    $ph.hide();
+    closeMenu();
+  });
+
+  // Click-away / ESC to close
+  $(document).on('click', function(){ closeMenu(); });
+  $(document).on('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
+
+  // Optional: set initial value if present
+  if ($hidden.val()){
+    var v = $hidden.val();
+    var $match = $menu.find('.ca_dd_opt').filter(function(){ return $(this).data('value')==v; }).first();
+    if ($match.length){
+      $valEl.text($match.text().trim()).show(); $ph.hide();
+      $match.attr('aria-selected','true');
+    }
+  }
+})(jQuery);
+
+// ===== Custom dropdown just for Duration =====
+(function($){
+  var $wrap   = $('#resched_duration_dd');
+  var $btn    = $wrap.find('.ca_dd_btn');
+  var $menu   = $wrap.find('.ca_dd_menu');
+  var $ph     = $wrap.find('.ca_dd_placeholder');
+  var $valEl  = $wrap.find('.ca_dd_value');
+  var $hidden = $('#resched_duration');
+
+  // Open / close menu
+  function openMenu(){
+    $menu.stop(true,true).fadeIn(120);
+    $btn.attr('aria-expanded','true');
+  }
+  function closeMenu(){
+    $menu.stop(true,true).fadeOut(120);
+    $btn.attr('aria-expanded','false');
+  }
+
+  // Toggle on button click
+  $btn.on('click', function(e){
+    e.stopPropagation();
+    if ($menu.is(':visible')) closeMenu(); else openMenu();
+  });
+
+  // Select option
+  $menu.on('click', '.ca_dd_opt', function(){
+    var $opt = $(this);
+    $menu.find('.ca_dd_opt').removeAttr('aria-selected');
+    $opt.attr('aria-selected','true');
+
+    var text = $opt.text().trim();
+    var val  = $opt.data('value'); // numeric minutes
+
+    $hidden.val(val).trigger('change');
+    $valEl.text(text).show();
+    $ph.hide();
+
+    closeMenu();
+  });
+
+  // Close on outside click / ESC
+  $(document).on('click', function(){ closeMenu(); });
+  $(document).on('keydown', function(e){ if (e.key === 'Escape') closeMenu(); });
+
+  // Init from hidden value (default 50)
+  (function init(){
+    var v = $hidden.val();
+    var $match = $menu.find('.ca_dd_opt[data-value="'+v+'"]');
+    if ($match.length){
+      $valEl.text($match.text().trim()).show();
+      $ph.hide();
+      $match.attr('aria-selected','true');
+    }
+  })();
+})(jQuery);
+
+
+
 </script>

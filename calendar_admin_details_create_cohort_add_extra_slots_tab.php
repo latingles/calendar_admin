@@ -112,8 +112,22 @@
         <div class="slot-widget-col" style="position:relative;">
           <label class="slot-widget-label">From</label>
           <div class="slot-widget-picker-row">
-            <button type="button" class="slot-widget-date-btn" id="slotWidgetFromDateBtn">Select Date</button>
-            <button type="button" class="slot-widget-time-btn" id="slotWidgetFromTimeBtn">Select Time</button>
+            <button type="button" style="height: 45px; margin-top:10px;" class="slot-widget-date-btn" id="slotWidgetFromDateBtn">Select Date</button>
+
+
+            <!-- <button type="button" class="slot-widget-time-btn" id="slotWidgetFromTimeBtn">Select Time</button> -->
+
+              <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
+                <div class="custom-time-pill">
+                  <input type="text" class="form-control time-input" id="slotWidgetFromTimeBtn" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                  <div class="custom-time-dropdown"></div>
+                </div>                                
+              </div>
+
+
+
+          
+          
           </div>
           <div class="slot-widget-inline-pop" id="slotWidgetFromDatePopup"></div>
           <div class="slot-widget-inline-pop" id="slotWidgetFromTimePopup"></div>
@@ -121,8 +135,19 @@
         <div class="slot-widget-col" style="position:relative;">
           <label class="slot-widget-label">Until</label>
           <div class="slot-widget-picker-row">
-            <button type="button" class="slot-widget-date-btn" id="slotWidgetUntilDateBtn">Select Date</button>
-            <button type="button" class="slot-widget-time-btn" id="slotWidgetUntilTimeBtn">Select Time</button>
+            <button type="button" style="height: 45px; margin-top:10px;" class="slot-widget-date-btn" id="slotWidgetUntilDateBtn">Select Date</button>
+            <!-- <button type="button" class="slot-widget-time-btn" id="slotWidgetUntilTimeBtn">Select Time</button> -->
+             
+            <div class="d-flex" id="customTimeFields" style="margin-top: 10px;">
+              <div class="custom-time-pill">
+                <input type="text" class="form-control time-input" id="slotWidgetUntilTimeBtn" value="9:30 am" autocomplete="off" readonly style="background-color:#ffffff;"/>
+                <div class="custom-time-dropdown"></div>
+              </div>                                
+            </div>
+
+
+
+
           </div>
           <div class="slot-widget-inline-pop" id="slotWidgetUntilDatePopup"></div>
           <div class="slot-widget-inline-pop" id="slotWidgetUntilTimePopup"></div>
@@ -131,37 +156,46 @@
       <button type="button" class="slot-widget-modal-main-btn" id="slotWidgetModalAddBtn">Add date and time</button>
     </div>
   </div>
+
+  <button type="submit" class="addtime-submit-btn">Add</button>
 </div>
 <script>
 (function() {
-  // Only inside slotWidget:
-  let from = { date: null, time: null };
+  // State
+  let from  = { date: null, time: null };
   let until = { date: null, time: null };
   let cal = {
-    from: {year:null, month:null, selected:null},
-    until: {year:null, month:null, selected:null}
+    from:  { year:null, month:null, selected:null },
+    until: { year:null, month:null, selected:null }
   };
 
+  /* =========================
+     DATE POPUP CALENDAR
+  ==========================*/
   function renderCal(year, month, selected, pick) {
     let today = new Date();
     let daysInMonth = new Date(year, month+1, 0).getDate();
-    let firstDay = new Date(year, month, 1).getDay();
+    let firstDay    = new Date(year, month, 1).getDay(); // 0=Sun
     let weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    let months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
     let calHtml = `<div class="slot-widget-calendar-head">
       <button class="slot-widget-calendar-prev" data-pick="${pick}">&#8592;</button>
       <span>${months[month]} ${year}</span>
       <button class="slot-widget-calendar-next" data-pick="${pick}">&#8594;</button>
     </div>
     <div class="slot-widget-calendar-grid">`;
+
     for (let wd of weekdays) calHtml += `<div class="slot-widget-calendar-day">${wd}</div>`;
     for (let i=0;i<firstDay;i++) calHtml += `<div></div>`;
-    for (let d=1;d<=daysInMonth;d++) {
+
+    for (let d=1; d<=daysInMonth; d++) {
       let dstr = `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
-      let isToday = (today.getFullYear()===year && today.getMonth()===month && today.getDate()===d);
+      let isToday    = (today.getFullYear()===year && today.getMonth()===month && today.getDate()===d);
       let isSelected = selected===dstr;
       calHtml += `<button class="slot-widget-calendar-date${isToday?' today':''}${isSelected?' selected':''}" data-date="${dstr}" data-pick="${pick}">${d}</button>`;
     }
+
     calHtml += `</div>
       <button class="slot-widget-calendar-done-btn" data-pick="${pick}">Done</button>`;
     return calHtml;
@@ -170,23 +204,25 @@
   // Open modal
   $('#slotWidgetOpenModalBtn').on('click', function() {
     $('#slotWidgetFromDateBtn, #slotWidgetUntilDateBtn').text('Select Date').removeClass('selected');
-    $('#slotWidgetFromTimeBtn, #slotWidgetUntilTimeBtn').text('Select Time').removeClass('selected');
-    from = { date: null, time: null };
+    from  = { date: null, time: null };
     until = { date: null, time: null };
-    cal.from = {year:null, month:null, selected:null};
-    cal.until = {year:null, month:null, selected:null};
+    cal.from  = { year:null, month:null, selected:null };
+    cal.until = { year:null, month:null, selected:null };
+
     $('#slotWidgetModalBackdrop').fadeIn(140);
     $('.slot-widget-inline-pop').hide();
+    $('.custom-time-dropdown').hide();
   });
 
   $('#slotWidgetCloseModalBtn').on('click', function(){
     $('#slotWidgetModalBackdrop').fadeOut(130);
     $('.slot-widget-inline-pop').hide();
+    $('.custom-time-dropdown').hide();
   });
 
   // Calendar logic - From
   $('#slotWidgetFromDateBtn').on('click', function(e){
-    e.preventDefault(); $('.slot-widget-inline-pop').hide();
+    e.preventDefault(); $('.slot-widget-inline-pop').hide(); $('.custom-time-dropdown').hide();
     let now = new Date();
     cal.from.year = now.getFullYear();
     cal.from.month = now.getMonth();
@@ -194,9 +230,10 @@
       renderCal(cal.from.year, cal.from.month, cal.from.selected, 'from')
     ).show();
   });
+
   // Calendar logic - Until
   $('#slotWidgetUntilDateBtn').on('click', function(e){
-    e.preventDefault(); $('.slot-widget-inline-pop').hide();
+    e.preventDefault(); $('.slot-widget-inline-pop').hide(); $('.custom-time-dropdown').hide();
     let now = new Date();
     cal.until.year = now.getFullYear();
     cal.until.month = now.getMonth();
@@ -204,7 +241,8 @@
       renderCal(cal.until.year, cal.until.month, cal.until.selected, 'until')
     ).show();
   });
-  // Nav
+
+  // Calendar nav
   $(document).on('click', '.slot-widget-calendar-prev', function(){
     let pick = $(this).data('pick');
     cal[pick].month--;
@@ -221,24 +259,29 @@
     if (pick==='from') $('#slotWidgetFromDatePopup').html(html);
     else $('#slotWidgetUntilDatePopup').html(html);
   });
+
   // Select a date
   $(document).on('click', '.slot-widget-calendar-date', function(){
     let pick = $(this).data('pick');
-    let val = $(this).data('date');
+    let val  = $(this).data('date');
     cal[pick].selected = val;
     let html = renderCal(cal[pick].year, cal[pick].month, val, pick);
     if (pick==='from') $('#slotWidgetFromDatePopup').html(html);
     else $('#slotWidgetUntilDatePopup').html(html);
   });
-  // Done button
+
+  // Done -> write label to buttons
   $(document).on('click', '.slot-widget-calendar-done-btn', function(){
     let pick = $(this).data('pick');
-    let val = cal[pick].selected;
+    let val  = cal[pick].selected;
     if (!val) return alert('Please select a date');
+
     let d = new Date(val);
     let weekdays = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-    let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-    let label = weekdays[d.getDay()] + ", " + months[d.getMonth()] + d.getDate();
+    let months   = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    // Space between month and date
+    let label = weekdays[d.getDay()] + ", " + months[d.getMonth()] + " " + d.getDate();
+
     if (pick==='from') {
       $('#slotWidgetFromDateBtn').text(label).addClass('selected');
       from.date = label;
@@ -250,61 +293,113 @@
     }
   });
 
-  // Time pickers
-  function renderTimeList(id) {
-    let times = [];
-    let start = 10; let end = 47;
-    for (let i = start; i <= end; i++) {
+  /* =========================
+     TIME DROPDOWNS (OLD FIELDS)
+     Uses: .custom-time-pill .time-input + .custom-time-dropdown
+  ==========================*/
+  function buildTimesArray() {
+    // 30-min steps from 5:00 AM (index 10) to 11:30 PM (index 47)
+    let out = [];
+    for (let i = 10; i <= 47; i++) {
       let hour = Math.floor(i/2);
-      let min = i%2 === 0 ? "00" : "30";
-      let hour12 = ((hour+11)%12+1);
-      let ampm = hour < 12 ? "AM" : "PM";
-      let str = hour12.toString().padStart(2, "0") + ":" + min + " " + ampm;
-      times.push(str);
+      let min  = (i%2===0) ? '00' : '30';
+      let hour12 = ((hour+11)%12)+1;
+      let ampm   = hour < 12 ? 'AM' : 'PM';
+      out.push(`${hour12}:${min} ${ampm}`);
     }
-    let html = `<ul>`;
-    for (let t of times) html += `<li class="slot-widget-timelist" data-for="${id}">${t}</li>`;
-    html += `</ul>`;
-    return html;
+    return out;
   }
-  $('#slotWidgetFromTimeBtn').on('click', function(e){
-    e.preventDefault(); $('.slot-widget-inline-pop').hide();
-    $('#slotWidgetFromTimePopup').html(renderTimeList('from')).show();
-  });
-  $('#slotWidgetUntilTimeBtn').on('click', function(e){
-    e.preventDefault(); $('.slot-widget-inline-pop').hide();
-    $('#slotWidgetUntilTimePopup').html(renderTimeList('until')).show();
-  });
-  $(document).on('click', '.slot-widget-timelist', function(){
-    let val = $(this).text();
-    let which = $(this).data('for');
-    if (which === "from") {
-      $('#slotWidgetFromTimeBtn').text(val).addClass('selected');
-      from.time = val;
-      $('#slotWidgetFromTimePopup').hide();
-    } else {
-      $('#slotWidgetUntilTimeBtn').text(val).addClass('selected');
-      until.time = val;
-      $('#slotWidgetUntilTimePopup').hide();
+  const TIME_OPTIONS = buildTimesArray();
+
+  function attachCustomTimeDropdown($pill, which) {
+    const $input = $pill.find('.time-input');
+    const $dd    = $pill.find('.custom-time-dropdown');
+
+    // Build options once
+    if (!$dd.data('built')) {
+      TIME_OPTIONS.forEach(t => {
+        const $btn = $('<button type="button"></button>').text(t);
+        $btn.on('click', function(e){
+          e.stopPropagation();
+          $input.val(t);
+          if (which === 'from') from.time = t; else until.time = t;
+          $dd.hide();
+        });
+        $dd.append($btn);
+      });
+      $dd.data('built', true);
+    }
+
+    // Toggle dropdown
+    $pill.on('click', function(e){
+      e.stopPropagation();
+      $('.custom-time-dropdown').not($dd).hide();
+      $dd.toggle();
+    });
+  }
+
+  // Attach to BOTH time pills (using your existing IDs on the inputs)
+  attachCustomTimeDropdown($('#slotWidgetFromTimeBtn').closest('.custom-time-pill'),  'from');
+  attachCustomTimeDropdown($('#slotWidgetUntilTimeBtn').closest('.custom-time-pill'), 'until');
+
+  // Click outside closes inline pops & time dropdowns
+  $(document).on('mousedown', function(e) {
+    let $modal = $('#slotWidgetModalBackdrop .slot-widget-modal');
+    if (!$modal.is(e.target) && $modal.has(e.target).length === 0) {
+      $('.slot-widget-inline-pop').hide();
+      $('.custom-time-dropdown').hide();
     }
   });
 
-  // Add chip
+  /* =========================
+     CHIP STRING (INCLUDE UNTIL DATE)
+  ==========================*/
+  function slotWidgetFormatRange(fromDate, fromTime, untilDate, untilTime){
+    // If both dates are the same, don't repeat the date
+    if (fromDate && untilDate && fromDate === untilDate){
+      return `${fromDate}, ${fromTime}–${untilTime}`;
+    }
+    // Otherwise show both dates
+    return `${fromDate}, ${fromTime} → ${untilDate}, ${untilTime}`;
+  }
+
+  /* =========================
+     ADD CHIP / VALIDATION
+  ==========================*/
   $('#slotWidgetModalAddBtn').on('click', function(){
-    if (!from.date || !from.time || !until.date || !until.time) {
+    // If user didn't explicitly pick time with dropdown, fall back to input values
+    from.time  = from.time  || ($('#slotWidgetFromTimeBtn').val()  || '').trim();
+    until.time = until.time || ($('#slotWidgetUntilTimeBtn').val() || '').trim();
+
+    // If user didn't press calendar Done, read button text (unless placeholder)
+    from.date  = from.date  || (function(){
+      const t = ($('#slotWidgetFromDateBtn').text() || '').trim();
+      return t && t !== 'Select Date' ? t : null;
+    })();
+    until.date = until.date || (function(){
+      const t = ($('#slotWidgetUntilDateBtn').text() || '').trim();
+      return t && t !== 'Select Date' ? t : null;
+    })();
+
+    if (!from.date || !until.date || !from.time || !until.time) {
       alert('Please select both From and Until dates and times!');
       return;
     }
-    let slotStr = `${from.date}, ${from.time}–${until.time}`;
-    let $chip = $(
-      `<div class="slot-widget-task-chip">
+
+    const slotStr = slotWidgetFormatRange(from.date, from.time, until.date, until.time);
+
+    const $chip = $(`
+      <div class="slot-widget-task-chip">
         ${slotStr}
         <span class="slot-widget-task-remove" title="Remove">&#10005;</span>
-      </div>`
-    );
+      </div>
+    `);
     $('#slotWidgetTasksList').append($chip);
+
+    // Close modal + cleanup
     $('#slotWidgetModalBackdrop').fadeOut(120);
     $('.slot-widget-inline-pop').hide();
+    $('.custom-time-dropdown').hide();
   });
 
   // Remove chip
@@ -312,15 +407,7 @@
     $(this).closest('.slot-widget-task-chip').fadeOut(140, function(){ $(this).remove(); });
   });
 
-  // Click outside to close popups
-  $(document).on('mousedown', function(e) {
-    let $modal = $('#slotWidgetModalBackdrop .slot-widget-modal');
-    if (!$modal.is(e.target) && $modal.has(e.target).length === 0) {
-      $('.slot-widget-inline-pop').hide();
-    }
-  });
-
-})(); // END NAMESPACE
+})(); // END IIFE
 
 
 // Tab logic unchanged
@@ -335,5 +422,4 @@ $('.calendar_admin_details_create_cohort_tab').click(function () {
   $('#addTimeTabContent').toggle(tab === "addtime");
   $('#addExtraSlotsTabContent').toggle(tab === "extraslots");
 });
-
 </script>
