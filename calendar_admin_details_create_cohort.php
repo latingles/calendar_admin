@@ -1119,6 +1119,11 @@
                   Cohort
                 </label>
 
+                <script>
+
+                  $.(document.selectElementById())
+                </script>
+
                 <!-- Wrap to anchor tooltip below the input -->
                 <div style="position:relative;display:block;">
                   <input type="text" readonly aria-readonly="true"
@@ -1228,7 +1233,7 @@
   <!-- Teacher 1 -->
   <div class="teacher-block" data-teacher="1">
     <div>
-      <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
+      <!-- <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
         <label>Teacher 1</label>
         <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher1DropdownBtn">
           Select Teacher
@@ -1244,7 +1249,130 @@
             <li><img src="https://randomuser.me/api/portraits/men/52.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"><span style="margin-left:10px;"> Fox</span></li>
           </ul>
         </div>
-      </div>
+      </div> -->
+
+
+      <?php
+require_once(__DIR__ . '/../../config.php');
+require_login();
+
+global $DB, $PAGE, $OUTPUT;
+
+/** Collect unique teacher user IDs from cohorts */
+$userids = $DB->get_fieldset_sql("
+    SELECT DISTINCT uid
+      FROM (
+            SELECT cohortmainteacher AS uid FROM {cohort}
+             WHERE cohortmainteacher IS NOT NULL AND cohortmainteacher > 0
+            UNION
+            SELECT cohortguideteacher AS uid FROM {cohort}
+             WHERE cohortguideteacher IS NOT NULL AND cohortguideteacher > 0
+      ) t
+");
+
+/** Fetch user records (not deleted/suspended) */
+$teachers = [];
+if ($userids) {
+    list($insql, $params) = $DB->get_in_or_equal($userids, SQL_PARAMS_NAMED);
+    $fields = "id, firstname, lastname, picture, imagealt, firstnamephonetic, lastnamephonetic, middlename, alternatename";
+    $teachers = $DB->get_records_select('user', "id $insql AND deleted = 0 AND suspended = 0", $params, 'firstname ASC, lastname ASC', $fields);
+}
+
+/** Build reusable <li> HTML */
+$teachers_li_html = '';
+if ($teachers) {
+    foreach ($teachers as $t) {
+        $pic = new user_picture($t);
+        $pic->size = 50;
+        $url  = $pic->get_url($PAGE)->out(false);
+        $name = fullname($t, true);
+
+        $teachers_li_html .= '<li class="teacher-option" data-userid="'.(int)$t->id.'" data-name="'.s($name).'" data-pic="'.s($url).'">'
+            .'<img src="'.s($url).'" class="calendar_admin_details_create_cohort_teacher_avatar" alt="'.s($name).'">'
+            .'<span style="margin-left:10px;">'.format_string($name).'</span>'
+            .'</li>';
+    }
+} else {
+    $teachers_li_html = '<li class="muted">No teachers found</li>';
+}
+?>
+
+<div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
+  <label>Teacher 1</label>
+
+  <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher1DropdownBtn">
+    <span class="label">Select Teacher</span>
+    <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
+  </div>
+
+  <!-- store the selected teacher id for this block -->
+  <input type="hidden" name="teacher1_userid" id="teacher1UserId" value="">
+
+  <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher1DropdownList">
+    <ul>
+      <?php echo $teachers_li_html; ?>
+    </ul>
+  </div>
+</div>
+
+
+<script>
+(function(){
+  // For every teacher dropdown wrapper on the page
+  document.querySelectorAll('.calendar_admin_details_create_cohort_teacher_dropdown_wrapper')
+    .forEach(function(wrapper){
+
+      const btn   = wrapper.querySelector('.calendar_admin_details_create_cohort_teacher_btn');
+      const list  = wrapper.querySelector('.calendar_admin_details_create_cohort_teacher_list');
+      const label = btn.querySelector('.label') || btn; // fallback if label span missing
+      const hidden = wrapper.querySelector('input[type="hidden"]');
+
+      // Open/close the list
+      btn.addEventListener('click', function(e){
+        if (!e.target.closest('.calendar_admin_details_create_cohort_teacher_list')) {
+          list.classList.toggle('open');   // make sure CSS shows .open
+        }
+      });
+
+      // Close when clicking outside this wrapper
+      document.addEventListener('click', function(e){
+        if (!wrapper.contains(e.target)) list.classList.remove('open');
+      });
+
+      // Select a teacher
+      list.addEventListener('click', function(e){
+        const li = e.target.closest('li.teacher-option');
+        if (!li) return;
+
+        // Update label text (you can also inject the avatar if you want)
+        label.textContent = li.dataset.name;
+
+        // Save selected id
+        if (hidden) hidden.value = li.dataset.userid;
+
+        // Close
+        list.classList.remove('open');
+      });
+    });
+})();
+</script>
+
+
+<style>
+.calendar_admin_details_create_cohort_teacher_dropdown_wrapper { position: relative; }
+.calendar_admin_details_create_cohort_teacher_btn { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
+.calendar_admin_details_create_cohort_teacher_list {
+  position: absolute; top: calc(100% + 6px); left: 0;
+  display: none; z-index: 1000;
+  background: #fff; border: 1px solid #eee; border-radius: 10px;
+  min-width: 220px; max-height: 300px; overflow-y: auto;
+  box-shadow: 0 12px 28px rgba(0,0,0,.12);
+}
+.calendar_admin_details_create_cohort_teacher_list.open { display: block; }
+.calendar_admin_details_create_cohort_teacher_list ul { list-style: none; margin: 0; padding: 6px 0; }
+.calendar_admin_details_create_cohort_teacher_list li { padding: 8px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.calendar_admin_details_create_cohort_teacher_list li:hover { background: #f6f6f7; }
+</style>
 
       <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
         <label>Class Name</label>
@@ -1361,7 +1489,7 @@
   <!-- Teacher 2 -->
   <div class="teacher-block" data-teacher="2">
     <div>
-      <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
+      <!-- <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper">
         <label>Teacher 2</label>
         <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher2DropdownBtn">
           Select Teacher
@@ -1375,7 +1503,35 @@
             <li><img src="https://randomuser.me/api/portraits/men/21.jpg" class="calendar_admin_details_create_cohort_teacher_avatar"> <span style="margin-left:10px;">Fox</span></li>
           </ul>
         </div>
-      </div>
+      </div> -->
+      
+
+
+      <div class="calendar_admin_details_create_cohort_teacher_dropdown_wrapper" id="teacher2Wrapper">
+  <label>Teacher 2</label>
+
+  <div class="calendar_admin_details_create_cohort_teacher_btn" id="teacher2DropdownBtn">
+    <span class="label">Select Teacher</span>
+    <svg viewBox="0 0 20 20"><path d="M7 8l3 3 3-3"></path></svg>
+  </div>
+
+  <!-- store the selected Teacher 2 user id -->
+  <input type="hidden" name="teacher2_userid" id="teacher2UserId" value="">
+
+  <div class="calendar_admin_details_create_cohort_teacher_list" id="teacher2DropdownList">
+    <ul>
+      <?php echo $teachers_li_html; ?>
+    </ul>
+  </div>
+</div>
+
+<script>
+
+$('#teacher2DropdownList').on('click', 'li.teacher-option', function () {
+  $('#teacher2UserId').val($(this).data('userid') || '');
+});
+
+</script>
 
       <div class="calendar_admin_details_create_cohort_class_dropdown_wrapper">
         <label>Class Name</label>
@@ -1483,6 +1639,215 @@
 
         <button class="calendar_admin_details_create_cohort_btn">Create Cohort</button>
       </div>
+
+      <script>
+
+// Prevent double-binding
+$(document).off('click.createCohort');
+
+$('.calendar_admin_details_create_cohort_btn').on('click', function (e) {
+  alert('creating cohort');
+  e.preventDefault();
+
+  // ───────────────────────── helpers ─────────────────────────
+  const trimTxt = ($el) => ($el.text() || '').replace(/\s+/g, ' ').trim();
+  const btnLabel = ($btn) => {
+    const $c = $btn.clone();
+    $c.find('svg').remove();
+    return trimTxt($c);
+  };
+  const rgbToHex = (rgb) => {
+    if (!rgb) return null;
+    if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(rgb)) return rgb.toUpperCase();
+    const m = rgb.match(/rgba?\s*\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)/i);
+    if (!m) return null;
+    const to2 = (n) => Number(n).toString(16).padStart(2, '0');
+    return ('#' + to2(m[1]) + to2(m[2]) + to2(m[3])).toUpperCase();
+  };
+  const parseTime = (s) => {
+    if (!s) return null;
+    // supports "HH:MM", "H:MM", "HH:MM AM", "HH:MMPM", etc.
+    const m = s.trim().match(/^(\d{1,2}):(\d{2})\s*([AP]M)?$/i);
+    if (!m) return null;
+    let h = parseInt(m[1], 10);
+    const min = parseInt(m[2], 10) || 0;
+    const ap = (m[3] || '').toUpperCase();
+    if (ap === 'PM' && h < 12) h += 12;
+    if (ap === 'AM' && h === 12) h = 0;
+    return { hour: Math.max(0, Math.min(23, h)), minute: Math.max(0, Math.min(59, min)) };
+  };
+  const parseDateToUnix = (label) => {
+    if (!label) return null;
+    // strip leading words like "Start date:" if present
+    const cleaned = label.replace(/^[A-Za-z ]*:\s*/,'').trim();
+    const d = new Date(cleaned);
+    const ts = d.getTime();
+    return Number.isFinite(ts) ? Math.floor(ts / 1000) : null;
+  };
+  const inferClassType = (label) => {
+    const s = (label || '').toLowerCase();
+    if (s.includes('tutor')) return 'tutor';
+    // treat anything else as main (Main Class, Practice, 1:1, Group, etc.)
+    return 'main';
+  };
+  const dayValFrom = ($el) => {
+    if (!$el || !$el.length) return 0;
+    if ($el.is('input[type=checkbox], input[type=radio]')) return $el.prop('checked') ? 1 : 0;
+    if ($el.attr('aria-pressed') !== undefined) return $el.attr('aria-pressed') === 'true' ? 1 : 0;
+    return ($el.hasClass('selected') || $el.hasClass('active')) ? 1 : 0;
+  };
+  // Tries several common selectors. If you already have specific elements, this will pick them up.
+  const extractWeekdays = ($root) => ({
+    cohortmonday:    dayValFrom($root.find('[data-day="monday"],    .day-mon')),
+    cohorttuesday:   dayValFrom($root.find('[data-day="tuesday"],   .day-tue')),
+    cohortwednesday: dayValFrom($root.find('[data-day="wednesday"], .day-wed')),
+    cohortthursday:  dayValFrom($root.find('[data-day="thursday"],  .day-thu')),
+    cohortfriday:    dayValFrom($root.find('[data-day="friday"],    .day-fri')),
+  });
+  const extractTutorWeekdays = ($root) => ({
+    cohorttutormonday:    dayValFrom($root.find('[data-tutor-day="monday"],    .tutor-day-mon')),
+    cohorttutortuesday:   dayValFrom($root.find('[data-tutor-day="tuesday"],   .tutor-day-tue')),
+    cohorttutorwednesday: dayValFrom($root.find('[data-tutor-day="wednesday"], .tutor-day-wed')),
+    cohorttutorthursday:  dayValFrom($root.find('[data-tutor-day="thursday"],  .tutor-day-thu')),
+    cohorttutorfriday:    dayValFrom($root.find('[data-tutor-day="friday"],    .tutor-day-fri')),
+  });
+
+  // ───────────────────────── roots ─────────────────────────
+  const $t1 = $('.teacher-block[data-teacher="1"]');
+  const $t2 = $('.teacher-block[data-teacher="2"]');
+
+  // top-level inputs you already have
+  const cohortIdNumber  = ($('#cohortInput').val() || '').trim();       // e.g. TX24-1-07092025-024  → idnumber
+  const cohortShortName = ($('#cohortShortInput').val() || '').trim();  // e.g. TX24                 → shortname
+
+  // TEACHER 1 capture (left)
+  const t1 = {
+    userid:        ($('#teacher1UserId').val() || '').trim(),
+    name:          btnLabel($('#teacher1DropdownBtn')),
+    className:     btnLabel($('#className1DropdownBtn')),   // used to infer main/tutor
+    scheduleLabel: trimTxt($t1.find('.cohort_schedule_btn')),
+    startTime:     ($t1.find('.time-input').eq(0).val() || '').trim(),
+    endTime:       ($t1.find('.time-input').eq(1).val() || '').trim(),
+    timezone:      trimTxt($t1.find('#eventTimezoneSelected')),
+    startDateLbl:  trimTxt($t1.find('.conference_modal_date_btn').first()),
+    color:         $t1.find('#createNewCohortSelectedColorLeft .create_new_cohort_tab_select_color_left_circle').css('background-color') || '',
+    $root:         $t1
+  };
+
+  // TEACHER 2 capture (right)
+  const t2 = {
+    userid:        ($('#teacher2UserId').val() || '').trim(),
+    name:          btnLabel($('#teacher2DropdownBtn')),
+    className:     btnLabel($('#className2DropdownBtn')),
+    scheduleLabel: trimTxt($t2.find('.cohort_schedule_btn')),
+    startTime:     ($t2.find('.calendar_admin_details_time_right_time-input').eq(0).val() || '').trim(),
+    endTime:       ($t2.find('.calendar_admin_details_time_right_time-input').eq(1).val() || '').trim(),
+    timezone:      trimTxt($t2.find('#eventTimezoneSelectedRight')),
+    startDateLbl:  trimTxt($t2.find('.conference_modal_date_btn').first()),
+    color:         $t2.find('#createNewCohortSelectedColorRight .create_new_cohort_tab_select_color_right_circle').css('background-color') || '',
+    $root:         $t2
+  };
+
+  // ───────────────────────── decide main vs tutor ─────────────────────────
+  const t1Type = inferClassType(t1.className);
+  const t2Type = inferClassType(t2.className);
+
+  // If both say "main" or both "tutor", prefer left as main.
+  const main = (t1Type === 'main') ? t1 : (t2Type === 'main') ? t2 : t1;
+  const tutor = (main === t1) ? t2 : t1;
+
+  // times → hours/minutes
+  const mainStart = parseTime(main.startTime) || { hour: 0, minute: 0 };
+  const tutorStart = parseTime(tutor.startTime) || { hour: 0, minute: 0 };
+
+  // weekdays (best-effort; if you have specific selectors, the helper will pick them up)
+  const mainDays = extractWeekdays(main.$root);
+  const tutorDays = extractTutorWeekdays(tutor.$root);
+
+  // dates
+  const startdate = parseDateToUnix(main.startDateLbl) || parseDateToUnix(tutor.startDateLbl) || null;
+  // optional end date button (use if you have it)
+  const enddate =
+    parseDateToUnix(trimTxt($('.conference_modal_enddate_btn').first())) || null;
+
+  // color (prefer main’s color)
+  const cohortcolor = rgbToHex(main.color) || rgbToHex(tutor.color) || null;
+
+  // name to store: use the visible “Cohort” input if you have a separate display name; else reuse shortname/idnumber
+  const name =
+    ($('#cohortNameInput').val() || '').trim() ||
+    (cohortShortName ? `${cohortShortName} Cohort` : cohortIdNumber || 'New Cohort');
+
+  // timestamps
+  const now = Math.floor(Date.now() / 1000);
+
+  // ───────────────────────── build single cohort object (matches DB) ─────────────────────────
+  const cohort = {
+    // REQUIRED / core-ish
+    contextid: null,                 // backend should set context_system::instance()->id
+    name,                            // varchar(254) NOT NULL
+    shortname: cohortShortName || null, // varchar(255) NOT NULL (you can enforce on backend)
+    idnumber: cohortIdNumber || null,   // varchar(100)
+    description: null,               // longtext
+    descriptionformat: 1,            // tinyint(2) (1 = HTML). Change if you prefer 0.
+    enabled: 1,                      // tinyint(1)
+    visible: 1,                      // tinyint(1)
+    component: 'local_adminboard',   // varchar(100) NOT NULL
+    timecreated: now,                // bigint(10)
+    timemodified: now,               // bigint(10)
+    theme: null,                     // varchar(50) NULL
+    cohortcolor,                     // varchar(20) NULL (stored as HEX like #FFAA00)
+
+    // MAIN days (Mon–Fri)
+    cohortmonday:    mainDays.cohortmonday ?? 0,
+    cohorttuesday:   mainDays.cohorttuesday ?? 0,
+    cohortwednesday: mainDays.cohortwednesday ?? 0,
+    cohortthursday:  mainDays.cohortthursday ?? 0,
+    cohortfriday:    mainDays.cohortfriday ?? 0,
+
+    // MAIN time
+    cohorthours:   mainStart.hour,   // tinyint(3)
+    cohortminutes: mainStart.minute, // tinyint(3)
+
+    // TUTOR days (Mon–Fri)
+    cohorttutormonday:    tutorDays.cohorttutormonday ?? 0,
+    cohorttutortuesday:   tutorDays.cohorttutortuesday ?? 0,
+    cohorttutorwednesday: tutorDays.cohorttutorwednesday ?? 0,
+    cohorttutorthursday:  tutorDays.cohorttutorthursday ?? 0,
+    cohorttutorfriday:    tutorDays.cohorttutorfriday ?? 0,
+
+    // TUTOR time
+    cohorttutorhours:   tutorStart.hour,   // tinyint(3)
+    cohorttutorminutes: tutorStart.minute, // tinyint(3)
+
+    // TEACHERS
+    cohortmainteacher:  (main.userid || null) ? Number(main.userid) : null,  // int(10) NULL
+    cohortguideteacher: (tutor.userid || null) ? Number(tutor.userid) : null,// int(10) NULL
+
+    // DATES
+    startdate, // bigint(10) NULL (UNIX seconds)
+    enddate    // bigint(10) NULL (UNIX seconds)
+  };
+
+  // ───────────────────────── payload (single object) ─────────────────────────
+  const payload = { cohort };
+
+  console.log('Create Cohort payload:', payload);
+  alert('clicked cohort create\n\n' + JSON.stringify(payload, null, 2));
+
+  // Later, POST to backend (example):
+  // fetch(M.cfg.wwwroot + '/local/adminboard/ajax/create_cohort.php', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  //   credentials: 'same-origin',
+  //   body: new URLSearchParams({
+  //     sesskey: M.cfg.sesskey,
+  //     payload: JSON.stringify(payload)
+  //   }).toString()
+  // }).then(r => r.json()).then(console.log).catch(console.error);
+});
+
+        </script>
 
       <?php require_once('calendar_admin_details_create_cohort_class_tab.php');?>
       
@@ -2669,19 +3034,75 @@ $(document).click(function() {
 
 // When a Teacher 1 option is clicked, set #cohortInput -> "CO1-#-#####-###"
 $(document).on('click', '#teacher1DropdownList li', function () {
-  var $cohort = $('#cohortInput');
+
+  debugger
+
+alert('clicked');
+  const $cohort = $('#cohortInput');
   if (!$cohort.length) return;
 
   // Start from current value or the placeholder template (e.g., "XXX-#-#####-###")
-  var template = ($cohort.val() || $cohort.attr('placeholder') || '').trim();
-  if (!template) return;
+  // var template = ($cohort.val() || $cohort.attr('placeholder') || '').trim();
+  // if (!template) return;
 
-  // Replace ONLY the first segment with CO1 (prefer explicit "XXX", else first segment before "-")
-  var updated = template.replace(/^XXX(?=-|$)/, 'FL1');
-  if (updated === template) updated = template.replace(/^[^-]+/, 'FL1');
+  // // Replace ONLY the first segment with CO1 (prefer explicit "XXX", else first segment before "-")
+  // var updated = template.replace(/^XXX(?=-|$)/, 'FL1');
+  // if (updated === template) updated = template.replace(/^[^-]+/, 'FL1');
 
-  $cohort.val(updated).trigger('input').trigger('change');
+  // $cohort.val(updated).trigger('input').trigger('change');
+
+  // Build query string like $.getJSON did (GET + query params)
+
+  const $li = $(this);
+ 
+  // assume $li and $cohort are already defined
+const $cohortShortInput = $('#cohortShortInput');
+  if (!$cohort.length) return;
+
+  // Optional: derive 1-based index within the list as teacher_index
+  const teacherIndex = $li.index() + 1;
+
+  const params = new URLSearchParams({
+    sesskey: M.cfg.sesskey,
+    teacherid: $li.data('userid') || '',      // ← from data-userid
+    teacher_name: $li.data('name') || '',     // ← from data-name (if your PHP wants it)
+    teacher_pic: $li.data('pic') || '',       // ← from data-pic (if useful server-side)
+    teacher_index: teacherIndex || ''         // ← only if you need it
+  });
+
+  fetch(M.cfg.wwwroot + '/local/customplugin/ajax/get_cohort_template.php?' + params.toString(), {
+    method: 'GET',
+    credentials: 'same-origin'
+  })
+  .then(res => { if (!res.ok) throw new Error(`HTTP ${res.status}`); return res.json(); })
+  .then(resp => {
+    if (resp && resp.success && resp.template) {
+      $cohort.val(resp.template).trigger('input').trigger('change');
+
+      // Set short name (prefer explicit, else derive from template)
+    const shortname = resp.nextshortname || String(resp.template).split('-')[0] || '';
+    if ($cohortShortInput.length && shortname) {
+      $cohortShortInput.val(shortname).trigger('input').trigger('change');
+      $cohortShortInput.closest('div').find('.custom-tooltip').hide();
+    }
+    } else {
+      // fallback: keep your old client-side logic
+      const template = ($cohort.val() || $cohort.attr('placeholder') || '').trim();
+      if (!template) return;
+      let updated = template.replace(/^XXX(?=-|$)/, 'CO1');
+      if (updated === template) updated = template.replace(/^[^-]+/, 'CO1');
+      $cohort.val(updated).trigger('input').trigger('change');
+    }
+  })
+  .catch(() => {
+    const template = ($cohort.val() || $cohort.attr('placeholder') || '').trim();
+    if (!template) return;
+    let updated = template.replace(/^XXX(?=-|$)/, 'CO1');
+    if (updated === template) updated = template.replace(/^[^-]+/, 'CO1');
+    $cohort.val(updated).trigger('input').trigger('change');
+  });
 });
+
 
 
 
